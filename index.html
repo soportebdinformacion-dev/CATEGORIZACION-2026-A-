@@ -1,37 +1,434 @@
-<!doctype html>
-<html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Categorización de Cosechadores</title>
-<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#78BE20">
-<link rel="apple-touch-icon" href="assets/icon-192.png"><link rel="stylesheet" href="styles.css"></head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#78BE20" />
+  <meta name="description" content="Categorización de Cosechadores 2026+ - Agrícola Huarmey" />
+  <title>CATEGORIZACIÓN DE COSECHADORES | Agrícola Huarmey</title>
+
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" href="./LOGO HUARMEY.png" />
+  <link rel="apple-touch-icon" href="./LOGO HUARMEY.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
 <body>
-<header><img src="assets/LOGO_HUARMEY.png" alt="Agrícola Huarmey" width="172" height="150">
-<h1>CATEGORIZACIÓN DE COSECHADORES</h1><p class="sub">Dashboard de la categorización del año 2026 a más</p></header>
-<div class="status" role="status"><span id="net" class="off">📵 Sin conexión</span><span id="last"></span><span id="pend"></span>
-<button id="bSync">🔄 Sincronizar</button><button id="bPanel" class="sec">📋 Cola de envío</button></div>
-<p id="warn" class="warn" hidden></p>
-<main>
-<section class="dash" aria-label="Indicadores">
-<div class="kpi">👥<b id="total">0</b><span>cosechadores únicos (por DNI) en la vista</span><small id="totalAll"></small></div>
-<div class="chart"><h2>🌱 MODALIDAD</h2><div id="mod"></div></div>
-<div class="chart"><h2>📈 HISTORICO</h2><div id="his"></div></div>
-<div class="chart"><h2>🏅 CATEG. 2026</h2><div id="cat"></div></div>
-</section>
-<section class="filters" aria-label="Filtros"><h2 class="sec-t wide">🎛️ Filtros</h2>
-<label class="wide">🔍 Buscar por DNI o nombre<input id="q" type="search" placeholder="Ej.: 0123… o Pérez" autocomplete="off"></label>
-<label>MODALIDAD<select data-f="MODALIDAD"></select></label>
-<label>HISTORICO<select data-f="HISTORICO"></select></label>
-<label>CATEG. 2026<select data-f="CATEG. 2026"></select></label>
-<label>RANGO %<select data-f="RANGO %"></select></label>
-<button id="reset" class="sec">✖ Limpiar filtros</button>
-</section>
-<h2 class="sec-t">👥 Fichas de cosechadores <span id="count" class="count" aria-live="polite"></span></h2>
-<p id="msg" class="state" hidden></p>
-<section id="cards" class="cards" aria-label="Fichas"></section>
-<h2 class="sec-t">📋 Detalle en tabla</h2>
-<div class="wrap"><table id="tbl"><colgroup id="cols"></colgroup><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
-<button id="more" class="more" hidden>Ver más registros</button>
-</main>
-<dialog id="panel"><h2>Cola de sincronización</h2><ul id="opsList"></ul><button id="close">Cerrar</button></dialog>
-<div id="toast" role="alert"></div>
-<script type="module" src="app.js"></script></body></html>
+  <!-- Barra superior de estado de conexión y sincronización -->
+  <div class="status-bar" role="region" aria-label="Estado de conexión y sincronización">
+    <div class="status-bar__left">
+      <span id="connectionBadge" class="conn-badge conn-badge--offline" role="status">
+        <span class="conn-dot" aria-hidden="true"></span>
+        <span id="connectionText">Verificando conexión...</span>
+      </span>
+      <span id="lastSyncText" class="last-sync-text">Última sinc.: Nunca</span>
+    </div>
+
+    <div class="status-bar__right">
+      <button id="btnQueueModal" type="button" class="btn btn--ghost btn--sm" aria-label="Ver cola de sincronización">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span>Cola (<strong id="pendingCountBadge">0</strong>)</span>
+      </button>
+
+      <button id="btnManualSync" type="button" class="btn btn--primary btn--sm" aria-label="Sincronizar ahora">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        <span>Sincronizar</span>
+      </button>
+
+      <button id="btnInstallPwa" type="button" class="btn btn--accent btn--sm hidden" aria-label="Instalar aplicación">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        <span>Instalar App</span>
+      </button>
+
+      <button id="btnConfigModal" type="button" class="btn btn--ghost btn--sm" title="Configurar conexión API" aria-label="Configurar conexión">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Membrete corporativo oficial -->
+  <header class="app-header">
+    <div class="app-header__inner">
+      <div class="app-header__logo-wrap">
+        <img
+          src="./LOGO HUARMEY.png"
+          alt="Logotipo Agrícola Huarmey"
+          class="app-header__logo"
+        />
+      </div>
+      <div class="app-header__titles">
+        <h1 class="app-header__title"><strong>CATEGORIZACIÓN DE COSECHADORES</strong></h1>
+        <p class="app-header__subtitle">Dashboard de la categorización del año 2026 a más</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notificaciones / Alertas globales -->
+  <div id="alertBanner" class="alert-banner hidden" role="alert"></div>
+
+  <main class="container">
+    <!-- SECCIÓN 1: PANEL DE INDICADORES Y VISUALIZACIONES -->
+    <section class="section-block" aria-labelledby="headingDashboard">
+      <div class="section-header">
+        <h2 id="headingDashboard" class="section-title">
+          <svg class="icon icon--green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Panel de Indicadores y Resumen
+        </h2>
+        <span class="unit-note">Unidad de conteo: <strong>Cosechadores únicos (por DNI)</strong></span>
+      </div>
+
+      <!-- KPIs Principales -->
+      <div class="kpi-grid">
+        <article class="kpi-card kpi-card--total">
+          <div class="kpi-card__label">TOTAL COSECHADORES ÚNICOS</div>
+          <div id="kpiTotalUnique" class="kpi-card__value">0</div>
+          <div id="kpiTotalSubtitle" class="kpi-card__meta">De 0 registros totales cargados</div>
+        </article>
+
+        <article class="kpi-card kpi-card--green">
+          <div class="kpi-card__label">PROMEDIO CUMP. % (FILTRADO)</div>
+          <div id="kpiAvgCump" class="kpi-card__value">0.0%</div>
+          <div class="kpi-card__meta">Cumplimiento acumulado</div>
+        </article>
+
+        <article class="kpi-card kpi-card--neutral">
+          <div class="kpi-card__label">PROMEDIO TOTAL DIAS</div>
+          <div id="kpiAvgDias" class="kpi-card__value">0.0</div>
+          <div class="kpi-card__meta">Días laborados por cosechador</div>
+        </article>
+      </div>
+
+      <!-- Visualizaciones dinámicas por MODALIDAD, HISTORICO y CATEG. 2026 -->
+      <div class="charts-grid">
+        <article class="chart-card">
+          <h3 class="chart-card__title">MODALIDAD (Cosechadores únicos)</h3>
+          <div id="chartModalidad" class="bar-chart" aria-live="polite"></div>
+        </article>
+
+        <article class="chart-card">
+          <h3 class="chart-card__title">HISTORICO (Cosechadores únicos)</h3>
+          <div id="chartHistorico" class="bar-chart" aria-live="polite"></div>
+        </article>
+
+        <article class="chart-card">
+          <h3 class="chart-card__title">CATEG. 2026 (Cosechadores únicos)</h3>
+          <div id="chartCateg2026" class="bar-chart" aria-live="polite"></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: BÚSQUEDA Y FILTROS COMBINABLES -->
+    <section class="section-block filters-panel" aria-labelledby="headingFilters">
+      <div class="section-header">
+        <h2 id="headingFilters" class="section-title">
+          <svg class="icon icon--red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+          </svg>
+          Búsqueda y Filtros Combinables
+        </h2>
+
+        <button id="btnClearFilters" type="button" class="btn btn--outline-red btn--sm">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          <span>Limpiar todos los filtros</span>
+        </button>
+      </div>
+
+      <div class="filters-grid">
+        <!-- Búsqueda única DNI / NOMBRE TRABAJADOR -->
+        <div class="filter-group filter-group--search">
+          <label for="filterSearch" class="filter-label">Buscar por DNI o NOMBRE TRABAJADOR</label>
+          <div class="search-input-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input
+              id="filterSearch"
+              type="search"
+              class="form-control form-control--search"
+              placeholder="Ej. 45891234 o Juan Pérez..."
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterModalidad" class="filter-label">MODALIDAD</label>
+          <select id="filterModalidad" class="form-control">
+            <option value="">Todas las modalidades</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterHistorico" class="filter-label">HISTORICO</label>
+          <select id="filterHistorico" class="form-control">
+            <option value="">Todos los históricos</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterCateg2026" class="filter-label">CATEG. 2026</label>
+          <select id="filterCateg2026" class="form-control">
+            <option value="">Todas las categorías 2026</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterRangoPct" class="filter-label">RANGO %</label>
+          <select id="filterRangoPct" class="form-control">
+            <option value="">Todos los rangos %</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterCumpMin" class="filter-label">CUMP. % (Mín - Máx)</label>
+          <div class="range-pair">
+            <input id="filterCumpMin" type="number" step="0.1" class="form-control" placeholder="Mín %" aria-label="CUMP. % mínimo" />
+            <span>-</span>
+            <input id="filterCumpMax" type="number" step="0.1" class="form-control" placeholder="Máx %" aria-label="CUMP. % máximo" />
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterDiasMin" class="filter-label">TOTAL DIAS (Mín - Máx)</label>
+          <div class="range-pair">
+            <input id="filterDiasMin" type="number" step="1" class="form-control" placeholder="Mín" aria-label="TOTAL DIAS mínimo" />
+            <span>-</span>
+            <input id="filterDiasMax" type="number" step="1" class="form-control" placeholder="Máx" aria-label="TOTAL DIAS máximo" />
+          </div>
+        </div>
+      </div>
+
+      <div class="results-summary-bar">
+        <span id="resultsCountText" class="results-count" aria-live="polite">
+          Mostrando 0 resultados encontrados
+        </span>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: FICHAS INDIVIDUALES DE COSECHADORES -->
+    <section class="section-block" aria-labelledby="headingCards">
+      <div class="section-header">
+        <h2 id="headingCards" class="section-title">
+          <svg class="icon icon--green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Fichas Individuales de Cosechadores
+        </h2>
+        <div class="pagination-controls" id="cardsPaginationTop"></div>
+      </div>
+
+      <div id="cardsLoading" class="state-box hidden">Cargando registros de cosechadores...</div>
+      <div id="cardsEmpty" class="state-box hidden">
+        No se encontraron cosechadores que coincidan con los filtros aplicados.
+      </div>
+      <div id="cardsContainer" class="cards-grid"></div>
+      <div class="pagination-controls pagination-controls--bottom" id="cardsPaginationBottom"></div>
+    </section>
+
+    <!-- SECCIÓN 4: TABLA DETALLADA ORDENABLE Y REDIMENSIONABLE -->
+    <section class="section-block" aria-labelledby="headingTable">
+      <div class="section-header">
+        <h2 id="headingTable" class="section-title">
+          <svg class="icon icon--neutral" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+          </svg>
+          Tabla Detallada de Cosechadores
+        </h2>
+        <span class="table-hint">Haz clic en un encabezado para ordenar · Arrastra el borde derecho de cada columna para ajustar su ancho</span>
+      </div>
+
+      <div id="tableStateBox" class="state-box hidden"></div>
+
+      <div class="table-wrapper" role="region" aria-label="Tabla detallada de cosechadores" tabindex="0">
+        <table id="cosechadoresTable" class="data-table">
+          <thead>
+            <tr>
+              <th data-col="DNI" data-type="text" style="width: 115px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">DNI <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+              <th data-col="NOMBRE TRABAJADOR" data-type="text" style="width: 240px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">NOMBRE TRABAJADOR <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+              <th data-col="MODALIDAD" data-type="text" style="width: 140px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">MODALIDAD <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+              <th data-col="HISTORICO" data-type="text" style="width: 140px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">HISTORICO <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+              <th data-col="CUMP. %" data-type="number" style="width: 115px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">CUMP. % <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+              <th data-col="TOTAL DIAS" data-type="number" style="width: 120px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">TOTAL DIAS <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+              <th data-col="CATEG. 2026" data-type="text" style="width: 140px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">CATEG. 2026 <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+              <th data-col="RANGO %" data-type="number" style="width: 115px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">RANGO % <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+              <th data-col="ORDEN_HISTORICO" data-type="number" style="width: 155px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">ORDEN_HISTORICO <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+              <th data-col="ASISTENCIA ACTUAL" data-type="text" style="width: 185px;">
+                <div class="th-inner">
+                  <button type="button" class="sort-btn">ASISTENCIA ACTUAL <span class="sort-indicator"></span></button>
+                  <span class="col-resizer" aria-hidden="true"></span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL 1: CONFIGURACIÓN DE CONEXIÓN A GOOGLE APPS SCRIPT -->
+  <dialog id="configModal" class="modal">
+    <form method="dialog" id="configForm" class="modal__box">
+      <div class="modal__header">
+        <h3>Configuración de Conexión en Campo</h3>
+        <button type="button" class="modal__close" data-close-modal="configModal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal__body">
+        <p class="modal__desc">
+          Ingresa la URL del Web App de Google Apps Script y el Token de acceso asignado por administración. Estos datos se guardan localmente en tu dispositivo.
+        </p>
+        <div class="form-field">
+          <label for="inputApiUrl">URL de Google Apps Script (Web App)</label>
+          <input
+            id="inputApiUrl"
+            type="url"
+            class="form-control"
+            placeholder="https://script.google.com/macros/s/.../exec"
+            required
+          />
+        </div>
+        <div class="form-field">
+          <label for="inputAccessToken">Token / PIN de Acceso de Campo</label>
+          <input
+            id="inputAccessToken"
+            type="password"
+            class="form-control"
+            placeholder="Ingresa tu clave de acceso"
+            required
+          />
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-close-modal="configModal">Cancelar</button>
+        <button type="submit" class="btn btn--primary">Guardar y Sincronizar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 2: REGISTRO / ACTUALIZACIÓN DE ASISTENCIA ACTUAL EN CAMPO -->
+  <dialog id="editModal" class="modal">
+    <form method="dialog" id="editForm" class="modal__box">
+      <div class="modal__header">
+        <h3>Actualizar ASISTENCIA ACTUAL</h3>
+        <button type="button" class="modal__close" data-close-modal="editModal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal__body">
+        <div class="worker-summary-box">
+          <div><strong>DNI:</strong> <span id="editDni"></span></div>
+          <div><strong>NOMBRE TRABAJADOR:</strong> <span id="editNombre"></span></div>
+          <div><strong>CATEG. 2026:</strong> <span id="editCateg"></span></div>
+        </div>
+
+        <div class="form-field">
+          <label for="selectAsistencia">Estado de ASISTENCIA ACTUAL</label>
+          <select id="selectAsistencia" class="form-control">
+            <option value="ASISTIO">ASISTIO</option>
+            <option value="FALTA">FALTA</option>
+            <option value="PERMISO">PERMISO</option>
+            <option value="DESCANSO MEDICO">DESCANSO MEDICO</option>
+            <option value="CUSTOM">Otro valor personalizado...</option>
+          </select>
+        </div>
+
+        <div id="customAsistenciaWrap" class="form-field hidden">
+          <label for="inputCustomAsistencia">Especificar ASISTENCIA ACTUAL</label>
+          <input
+            id="inputCustomAsistencia"
+            type="text"
+            maxlength="60"
+            class="form-control"
+            placeholder="Escribe el estado exacto"
+          />
+        </div>
+
+        <p class="offline-note">
+          Si no hay internet, este cambio se guardará en tu dispositivo con estado <strong>PENDIENTE</strong> y se enviará automáticamente al recuperar señal.
+        </p>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-close-modal="editModal">Cancelar</button>
+        <button type="submit" class="btn btn--primary">Guardar Cambio</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 3: COLA DE SINCRONIZACIÓN Y RESOLUCIÓN DE CONFLICTOS -->
+  <dialog id="queueModal" class="modal">
+    <div class="modal__box modal__box--lg">
+      <div class="modal__header">
+        <h3>Cola de Sincronización Offline</h3>
+        <button type="button" class="modal__close" data-close-modal="queueModal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal__body">
+        <div class="queue-actions">
+          <button id="btnRetryAllQueue" type="button" class="btn btn--primary btn--sm">Reintentar Pendientes</button>
+          <button id="btnClearSyncedQueue" type="button" class="btn btn--ghost btn--sm">Limpiar Sincronizados</button>
+        </div>
+        <div id="queueListContainer" class="queue-list"></div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-close-modal="queueModal">Cerrar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
