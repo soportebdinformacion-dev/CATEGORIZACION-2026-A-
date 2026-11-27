@@ -17,20 +17,18 @@
 <div class="chart"><h2>📈 HISTORICO</h2><div id="his"></div></div>
 <div class="chart"><h2>🏅 CATEG. 2026</h2><div id="cat"></div></div>
 </section>
-<section class="filters" aria-label="Filtros">
+<section class="filters" aria-label="Filtros"><h2 class="sec-t wide">🎛️ Filtros</h2>
 <label class="wide">🔍 Buscar por DNI o nombre<input id="q" type="search" placeholder="Ej.: 0123… o Pérez" autocomplete="off"></label>
 <label>MODALIDAD<select data-f="MODALIDAD"></select></label>
 <label>HISTORICO<select data-f="HISTORICO"></select></label>
 <label>CATEG. 2026<select data-f="CATEG. 2026"></select></label>
 <label>RANGO %<select data-f="RANGO %"></select></label>
-<label>CUMP. % (mín – máx)<span class="pair"><input data-n="cMin" type="number" step="any" placeholder="mín"><input data-n="cMax" type="number" step="any" placeholder="máx"></span></label>
-<label>TOTAL DIAS (mín – máx)<span class="pair"><input data-n="dMin" type="number" step="any" placeholder="mín"><input data-n="dMax" type="number" step="any" placeholder="máx"></span></label>
 <button id="reset" class="sec">✖ Limpiar filtros</button>
 </section>
-<p id="count" class="count" aria-live="polite"></p>
+<h2 class="sec-t">👥 Fichas de cosechadores <span id="count" class="count" aria-live="polite"></span></h2>
 <p id="msg" class="state" hidden></p>
 <section id="cards" class="cards" aria-label="Fichas"></section>
-<h2 class="tt">📋 Detalle en tabla</h2>
+<h2 class="sec-t">📋 Detalle en tabla</h2>
 <div class="wrap"><table id="tbl"><colgroup id="cols"></colgroup><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
 <button id="more" class="more" hidden>Ver más registros</button>
 </main>
