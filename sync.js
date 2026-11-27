@@ -1,89 +1,300 @@
-// Cola de sincronización, detección real de conexión y llamadas a Apps Script
-import { CONFIG } from './config.js';
-import * as db from './db.js';
-const KEY = 'accessCode';
-let running = false, online = false, lastError = '';
-const listeners = [];
-export const onChange = f => listeners.push(f);
-const emit = () => listeners.forEach(f => f());
-export const state = () => ({ online, running, lastError });
+/**
+ * sync.js - Motor de Conectividad Real y Sincronización Offline-First
+ * Categorización de Cosechadores 2026+
+ */
 
-async function api(action, body = {}, retry = true) {
-  if (!CONFIG.API_URL || CONFIG.API_URL.includes('[')) throw Object.assign(new Error('Falta configurar API_URL en config.js'), { code: 'CONFIG' });
-  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), CONFIG.TIMEOUT_MS);
-  try {
-    const r = await fetch(CONFIG.API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ ...body, action, code: localStorage.getItem(KEY) || '' }), signal: ctl.signal });
-    const j = await r.json();
-    if (j.code === 'AUTH' && retry) {
-      const c = prompt('Ingresa el código de acceso de la aplicación:');
-      if (c !== null) { localStorage.setItem(KEY, c.trim()); return api(action, body, false); }
+import { localDB } from './db.js';
+
+const MAX_RETRIES = 5;
+const PING_TIMEOUT_MS = 6000;
+const REQUEST_TIMEOUT_MS = 20000;
+
+export class SyncEngine {
+  constructor(onStatusChange) {
+    this.onStatusChange = typeof onStatusChange === 'function' ? onStatusChange : () => {};
+    this.isOnline = false;
+    this.isSyncing = false;
+    this.monitorTimer = null;
+  }
+
+  /**
+   * Genera un identificador único estable e idempotente para cada operación.
+   */
+  generateOperationId(dni) {
+    const randomPart = (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+    return `${dni}_${randomPart}`;
+  }
+
+  /**
+   * Obtiene las credenciales de sesión almacenadas localmente (sin hardcodear secretos).
+   */
+  async getCredentials() {
+    const apiUrl = await localDB.getMeta('API_URL');
+    const token = await localDB.getMeta('ACCESS_TOKEN');
+    return { apiUrl, token };
+  }
+
+  /**
+   * Guarda la URL del Web App de Apps Script y el Token de acceso de campo.
+   */
+  async saveCredentials(apiUrl, token) {
+    await localDB.setMeta('API_URL', String(apiUrl || '').trim());
+    await localDB.setMeta('ACCESS_TOKEN', String(token || '').trim());
+  }
+
+  /**
+   * Verifica conectividad real mediante solicitud ligera 'ping' al servidor,
+   * sin depender exclusivamente de navigator.onLine.
+   */
+  async checkRealConnectivity() {
+    if (!navigator.onLine) {
+      this.setOnlineState(false);
+      return false;
     }
-    if (!j.ok) throw Object.assign(new Error(j.error || 'Error del servidor'), { code: j.code || 'SERVER', actual: j.actual });
-    return j;
-  } finally { clearTimeout(t); }
-}
 
-// "online" real: el navegador dice que hay red Y el servidor responde
-export async function ping() {
-  if (!navigator.onLine) { online = false; emit(); return false; }
-  try { await api('ping'); online = true; lastError = ''; }
-  catch (e) { online = false; lastError = e.code ? e.message : 'Sin respuesta del servidor'; }
-  emit(); return online;
-}
+    const { apiUrl } = await this.getCredentials();
+    if (!apiUrl) {
+      this.setOnlineState(false);
+      return false;
+    }
 
-export async function enqueue(rec, field, value) {
-  const ops = await db.getAll('cola');
-  const prev = ops.find(o => o.dni === rec.DNI && o.field === field && o.estado === 'PENDIENTE');
-  if (prev) await db.put('cola', { ...prev, value }); // fusiona ediciones: la base sigue siendo la del servidor
-  else await db.put('cola', { opId: crypto.randomUUID(), dni: rec.DNI, field, value, base: rec[field],
-    estado: 'PENDIENTE', intentos: 0, error: '', creado: new Date().toISOString() });
-  await db.put('cosechadores', { ...rec, [field]: value });
-  emit();
-}
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), PING_TIMEOUT_MS);
 
-export async function syncAll(manual = false) {
-  if (running) return;
-  running = true; emit();
-  try {
-    if (!await ping()) return;
-    let ops = (await db.getAll('cola')).filter(o => o.estado === 'PENDIENTE' || (manual && o.estado === 'ERROR' && o.code !== 'CONFLICTO'));
-    ops.sort((a, b) => a.creado.localeCompare(b.creado));
-    for (const o of ops) {
-      try {
-        await api('update', { opId: o.opId, dni: o.dni, field: o.field, value: o.value, base: o.base, force: !!o.force });
-        await db.put('cola', { ...o, estado: 'SINCRONIZADO', error: '', code: '', fin: new Date().toISOString() });
-      } catch (e) {
-        const permanente = ['CONFLICTO', 'VALIDACION', 'NOENCONTRADO'].includes(e.code), n = o.intentos + 1;
-        await db.put('cola', { ...o, intentos: n, code: e.code || 'RED', error: e.message, actual: e.actual,
-          estado: permanente || n >= CONFIG.MAX_RETRIES ? 'ERROR' : 'PENDIENTE' });
-        if (!e.code) break; // fallo de red: reintenta en el siguiente ciclo
+    try {
+      const pingUrl = `${apiUrl}?action=ping&_t=${Date.now()}`;
+      const response = await fetch(pingUrl, {
+        method: 'GET',
+        cache: 'no-store',
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        this.setOnlineState(false);
+        return false;
       }
+
+      const data = await response.json();
+      const online = Boolean(data && data.ok === true);
+      this.setOnlineState(online);
+      return online;
+    } catch (_err) {
+      clearTimeout(timeoutId);
+      this.setOnlineState(false);
+      return false;
     }
-    const j = await api('list'), all = await db.getAll('cola');
-    const data = j.data.filter(r => r.DNI), map = Object.fromEntries(data.map(r => [r.DNI, r]));
-    all.filter(o => o.estado === 'PENDIENTE').forEach(o => { if (map[o.dni]) map[o.dni][o.field] = o.value; });
-    await db.replaceAll('cosechadores', data);
-    await db.setMeta('last', new Date().toISOString());
-    await db.setMeta('dupes', j.duplicados || 0);
-    for (const o of all) if (o.estado === 'SINCRONIZADO' && Date.now() - Date.parse(o.fin || o.creado) > 7 * 864e5) await db.del('cola', o.opId);
-    lastError = '';
-  } catch (e) { lastError = e.message; }
-  finally { running = false; emit(); }
-}
+  }
 
-// Conflictos: 'server' descarta mi cambio; 'mine' lo reenvía forzando
-export async function resolve(opId, mode) {
-  const o = (await db.getAll('cola')).find(x => x.opId === opId);
-  if (!o) return;
-  if (mode === 'server') await db.del('cola', opId);
-  else await db.put('cola', { ...o, estado: 'PENDIENTE', force: true, intentos: 0, error: '' });
-  emit(); syncAll();
-}
+  setOnlineState(online) {
+    const changed = this.isOnline !== online;
+    this.isOnline = online;
+    if (changed) {
+      this.onStatusChange({
+        type: 'CONNECTIVITY',
+        isOnline: this.isOnline
+      });
+    }
+  }
 
-export function start() {
-  addEventListener('online', () => syncAll());
-  addEventListener('offline', () => { online = false; emit(); });
-  setInterval(() => { if (!document.hidden) syncAll(); }, CONFIG.SYNC_INTERVAL_MS);
-  syncAll();
+  /**
+   * Inicia monitoreo periódico y eventos de red del navegador.
+   */
+  startMonitoring(intervalMs = 25000) {
+    window.addEventListener('online', async () => {
+      const realOnline = await this.checkRealConnectivity();
+      if (realOnline) {
+        await this.syncAll();
+      }
+    });
+
+    window.addEventListener('offline', () => {
+      this.setOnlineState(false);
+    });
+
+    this.stopMonitoring();
+    this.monitorTimer = setInterval(async () => {
+      const wasOffline = !this.isOnline;
+      const nowOnline = await this.checkRealConnectivity();
+      const pending = await localDB.getPendingOperations();
+
+      if (nowOnline && (wasOffline || pending.length > 0)) {
+        await this.syncAll();
+      }
+    }, intervalMs);
+  }
+
+  stopMonitoring() {
+    if (this.monitorTimer) {
+      clearInterval(this.monitorTimer);
+      this.monitorTimer = null;
+    }
+  }
+
+  /**
+   * Ejecuta ciclo completo de sincronización:
+   * 1. Envía operaciones pendientes (cola) a Google Sheets.
+   * 2. Descarga la última versión consolidada desde Google Sheets a IndexedDB.
+   */
+  async syncAll(manual = false) {
+    if (this.isSyncing) {
+      return { ok: false, message: 'Sincronización en curso.' };
+    }
+
+    const { apiUrl, token } = await this.getCredentials();
+    if (!apiUrl || !token) {
+      return { ok: false, code: 'MISSING_CONFIG', message: 'Falta configurar URL de API o Token.' };
+    }
+
+    const online = await this.checkRealConnectivity();
+    if (!online) {
+      return { ok: false, code: 'OFFLINE', message: 'Sin conexión real con el servidor.' };
+    }
+
+    this.isSyncing = true;
+    this.onStatusChange({ type: 'SYNC_START', manual });
+
+    try {
+      // Paso 1: Enviar operaciones pendientes en cola
+      const pushResult = await this.pushPendingOperations(apiUrl, token);
+
+      // Paso 2: Descargar registros actualizados desde Google Sheets
+      const pullResult = await this.pullServerRecords(apiUrl, token);
+
+      const nowIso = new Date().toISOString();
+      await localDB.setMeta('LAST_SYNC', nowIso);
+
+      this.isSyncing = false;
+      this.onStatusChange({
+        type: 'SYNC_COMPLETE',
+        lastSync: nowIso,
+        pushResult,
+        pullResult
+      });
+
+      return {
+        ok: true,
+        lastSync: nowIso,
+        pushResult,
+        pullResult
+      };
+    } catch (error) {
+      this.isSyncing = false;
+      this.onStatusChange({
+        type: 'SYNC_ERROR',
+        message: error.message
+      });
+      return {
+        ok: false,
+        message: error.message
+      };
+    }
+  }
+
+  /**
+   * Envía en lote las operaciones pendientes con reintentos controlados.
+   */
+  async pushPendingOperations(apiUrl, token) {
+    const pendingOps = await localDB.getPendingOperations();
+    const eligibleOps = pendingOps.filter(op => (op.retries || 0) < MAX_RETRIES);
+
+    if (eligibleOps.length === 0) {
+      return { processed: 0, conflicts: 0, errors: 0 };
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    try {
+      // Nota: Google Apps Script requiere text/plain para evitar preflight CORS complejo
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          action: 'sync_batch',
+          token: token,
+          operations: eligibleOps.map(op => ({
+            opId: op.opId,
+            dni: op.dni,
+            changes: op.changes,
+            baseVersionHash: op.baseVersionHash,
+            forceOverwrite: op.forceOverwrite
+          }))
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status} al enviar cambios.`);
+      }
+
+      const data = await response.json();
+      if (!data.ok) {
+        throw new Error(data.message || 'El servidor rechazó el lote de sincronización.');
+      }
+
+      let conflicts = 0;
+      let errors = 0;
+      let synced = 0;
+
+      for (const res of (data.results || [])) {
+        await localDB.updateOperationResult(res.opId, res);
+        if (res.status === 'SINCRONIZADO') synced++;
+        else if (res.status === 'CONFLICT') conflicts++;
+        else errors++;
+      }
+
+      return { processed: synced, conflicts, errors };
+    } catch (err) {
+      clearTimeout(timeoutId);
+      // Registrar intento fallido en cada operación del lote
+      for (const op of eligibleOps) {
+        await localDB.updateOperationResult(op.opId, {
+          status: 'ERROR',
+          message: err.name === 'AbortError'
+            ? 'Tiempo de espera agotado al conectar con Google Sheets.'
+            : err.message
+        });
+      }
+      throw err;
+    }
+  }
+
+  /**
+   * Descarga todos los registros desde Google Sheets y los guarda en IndexedDB.
+   */
+  async pullServerRecords(apiUrl, token) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+    try {
+      const url = `${apiUrl}?action=list&token=${encodeURIComponent(token)}&_t=${Date.now()}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        cache: 'no-store',
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status} al consultar registros.`);
+      }
+
+      const data = await response.json();
+      if (!data.ok) {
+        throw new Error(data.message || 'Error al obtener datos de Google Sheets.');
+      }
+
+      await localDB.saveServerRecords(data.records || []);
+      return { total: (data.records || []).length };
+    } catch (err) {
+      clearTimeout(timeoutId);
+      throw err;
+    }
+  }
 }
