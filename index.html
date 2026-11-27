@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Categorización de Cosechadores</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#78BE20">
+<link rel="apple-touch-icon" href="assets/icon-192.png"><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header><img src="assets/LOGO_HUARMEY.png" alt="Agrícola Huarmey" width="172" height="150">
+<h1>CATEGORIZACIÓN DE COSECHADORES</h1><p class="sub">Dashboard de la categorización del año 2026 a más</p></header>
+<div class="status" role="status"><span id="net" class="off">📵 Sin conexión</span><span id="last"></span><span id="pend"></span>
+<button id="bSync">🔄 Sincronizar</button><button id="bPanel" class="sec">📋 Cola de envío</button></div>
+<p id="warn" class="warn" hidden></p>
+<main>
+<section class="dash" aria-label="Indicadores">
+<div class="kpi">👥<b id="total">0</b><span>cosechadores únicos (por DNI) en la vista</span><small id="totalAll"></small></div>
+<div class="chart"><h2>🌱 MODALIDAD</h2><div id="mod"></div></div>
+<div class="chart"><h2>📈 HISTORICO</h2><div id="his"></div></div>
+<div class="chart"><h2>🏅 CATEG. 2026</h2><div id="cat"></div></div>
+</section>
+<section class="filters" aria-label="Filtros">
+<label class="wide">🔍 Buscar por DNI o nombre<input id="q" type="search" placeholder="Ej.: 0123… o Pérez" autocomplete="off"></label>
+<label>MODALIDAD<select data-f="MODALIDAD"></select></label>
+<label>HISTORICO<select data-f="HISTORICO"></select></label>
+<label>CATEG. 2026<select data-f="CATEG. 2026"></select></label>
+<label>RANGO %<select data-f="RANGO %"></select></label>
+<label>CUMP. % (mín – máx)<span class="pair"><input data-n="cMin" type="number" step="any" placeholder="mín"><input data-n="cMax" type="number" step="any" placeholder="máx"></span></label>
+<label>TOTAL DIAS (mín – máx)<span class="pair"><input data-n="dMin" type="number" step="any" placeholder="mín"><input data-n="dMax" type="number" step="any" placeholder="máx"></span></label>
+<button id="reset" class="sec">✖ Limpiar filtros</button>
+</section>
+<p id="count" class="count" aria-live="polite"></p>
+<p id="msg" class="state" hidden></p>
+<section id="cards" class="cards" aria-label="Fichas"></section>
+<h2 class="tt">📋 Detalle en tabla</h2>
+<div class="wrap"><table id="tbl"><colgroup id="cols"></colgroup><thead id="thead"></thead><tbody id="tbody"></tbody></table></div>
+<button id="more" class="more" hidden>Ver más registros</button>
+</main>
+<dialog id="panel"><h2>Cola de sincronización</h2><ul id="opsList"></ul><button id="close">Cerrar</button></dialog>
+<div id="toast" role="alert"></div>
+<script type="module" src="app.js"></script></body></html>
