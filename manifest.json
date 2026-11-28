@@ -1,26 +1,16 @@
 {
-  "name": "Categorización de Cosechadores - Agrícola Huarmey",
-  "short_name": "Cosechadores 2026+",
-  "description": "Aplicación PWA para consulta, análisis y registro en campo de la categorización de cosechadores 2026 en adelante.",
+  "name": "Categorización de Cosechadores – Agrícola Huarmey",
+  "short_name": "Categorización",
+  "description": "Dashboard de la categorización de cosechadores 2026",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#F6F7F5",
-  "theme_color": "#78BE20",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#DA291C",
   "lang": "es-PE",
   "icons": [
-    {
-      "src": "./LOGO HUARMEY.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./LOGO HUARMEY.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
