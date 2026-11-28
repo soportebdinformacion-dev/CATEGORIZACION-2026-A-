@@ -1,86 +1,29 @@
-/**
- * Service Worker - Categorización de Cosechadores 2026+
- * Estrategia:
- * - Recursos estáticos (App Shell): Cache-First con actualización en segundo plano.
- * - Llamadas a Google Apps Script: Network-Only (manejadas por IndexedDB y sync.js).
- */
+// Service Worker – app shell offline (cache-first); la API de Google nunca se cachea aquí.
+const CACHE = 'categ-cosechadores-v1';
+const SHELL = ['./', './index.html', './manifest.json', './LOGO_HUARMEY.png', './icon-192.png', './icon-512.png'];
 
-const CACHE_NAME = 'huarmey-cosechadores-v1.0.0';
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
+});
 
-const APP_SHELL_ASSETS = [
-  './',
-  './index.html',
-  './styles.css',
-  './app.js',
-  './db.js',
-  './sync.js',
-  './manifest.json',
-  './LOGO HUARMEY.png'
-];
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL_ASSETS))
-      .then(() => self.skipWaiting())
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
-      );
-    }).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', (event) => {
-  const requestUrl = new URL(event.request.url);
-
-  // No interceptar peticiones a Google Apps Script (las gestiona sync.js + IndexedDB)
-  if (
-    requestUrl.hostname.includes('script.google.com') ||
-    requestUrl.hostname.includes('script.googleusercontent.com') ||
-    event.request.method !== 'GET'
-  ) {
-    return;
-  }
-
-  // Estrategia Cache-First para App Shell
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request)
-        .then((networkResponse) => {
-          if (
-            networkResponse &&
-            networkResponse.status === 200 &&
-            networkResponse.type === 'basic'
-          ) {
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          // Si falla la navegación estando offline, devolver index.html en caché
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
-          return new Response('Recurso no disponible sin conexión.', {
-            status: 503,
-            statusText: 'Offline'
-          });
-        });
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  const url = new URL(req.url);
+  if (req.method !== 'GET' || url.origin !== location.origin) return; // API externa: sin interceptar
+  e.respondWith(
+    caches.match(req, { ignoreSearch: true }).then(hit => {
+      const net = fetch(req).then(res => {
+        if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+        return res;
+      }).catch(() => hit || (req.mode === 'navigate' ? caches.match('./index.html') : undefined));
+      return hit || net; // cache-first, con actualización en segundo plano
     })
   );
 });
