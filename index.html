@@ -2,295 +2,345 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#DA291C">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Categorización de Cosechadores</title>
 <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#78BE20">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Categorización de Cosechadores – Agrícola Huarmey</title>
 <style>
-:root{--rojo:#DA291C;--verde:#78BE20;--gris:#8A8178;--rojo-c:#fdeceb;--verde-c:#f0f8e6;--bg:#faf8f5;--txt:#2b2825;--card:#fff;--line:#e6e1da}
+:root{--r:#DA291C;--v:#78BE20;--g:#8A8178;--rl:#FCE9E7;--vl:#EEF7E1;--bg:#F7F6F2;--tx:#2E2A26}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:env(safe-area-inset-bottom,0)}
-header.memb{background:#fff;border-bottom:4px solid var(--rojo);padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;display:flex;justify-content:center;position:relative}
-header.memb img{height:84px;max-width:100%;object-fit:contain}
-.top{display:flex;gap:6px;position:absolute;right:8px;top:calc(8px + env(safe-area-inset-top,0px))}
-.status{font-size:12px;font-weight:700;padding:6px 10px;border-radius:99px;background:var(--verde-c);color:#3d6a0c;border:1px solid var(--verde)}
-.status.off{background:var(--rojo-c);color:var(--rojo);border-color:var(--rojo)}
-h1{text-align:center;font-weight:800;font-size:clamp(20px,5vw,30px);margin:14px 10px 2px;color:var(--rojo)}
-.sub{text-align:center;color:var(--gris);margin:0 10px 14px;font-size:15px}
-main{max-width:1200px;margin:auto;padding:0 12px 40px}
-.btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 18px;min-height:48px;cursor:pointer;background:var(--verde);color:#fff}
-.btn.rojo{background:var(--rojo)}.btn.gris{background:#fff;color:var(--gris);border:2px solid var(--gris)}
-.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5}
-.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.bar .btn{flex:1 1 140px}
-.totales{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:14px}
-.tot{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;border-top:5px solid var(--verde)}
-.tot:nth-child(2){border-top-color:var(--gris)}.tot:nth-child(3){border-top-color:var(--rojo)}
-.tot h3{margin:0 0 8px;font-size:14px;letter-spacing:.5px;color:var(--gris)}
-.tot .row{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:14px;cursor:pointer;border-radius:8px;padding:2px 4px}
-.tot .row:hover,.tot .row.sel{background:var(--verde-c)}
-.tot .row b{min-width:34px;text-align:right}
-.tot .meter{flex:1;height:10px;background:#eee;border-radius:9px;overflow:hidden}.tot .meter i{display:block;height:100%;background:var(--verde)}
-.tot:nth-child(3) .meter i{background:var(--rojo)}.tot:nth-child(2) .meter i{background:var(--gris)}
-.filtros{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px}
-label{font-size:12px;font-weight:700;color:var(--gris);display:block;margin-bottom:3px}
-input,select{width:100%;font:inherit;padding:12px;border:2px solid var(--line);border-radius:10px;background:#fff;min-height:48px}
-input:focus,select:focus{outline:0;border-color:var(--verde)}input.bad{border-color:var(--rojo);background:var(--rojo-c)}
-.count{color:var(--gris);font-size:13px;margin:6px 2px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;margin-bottom:22px}
-.card{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--verde);border-radius:14px;padding:12px}
-.card.pend{border-left-color:#e8a317}.card.err{border-left-color:var(--rojo)}
-.card h4{margin:0 0 6px;font-size:16px}
-.card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}
-.card dt{color:var(--gris);font-weight:700}.card dd{margin:0;text-align:right;word-break:break-word}
-.card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
-.tag{font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px}
-.t-Sincronizado{background:var(--verde-c);color:#3d6a0c}.t-Pendiente{background:#fff3d6;color:#9a6700}.t-Error{background:var(--rojo-c);color:var(--rojo)}
-.card .btn{padding:6px 12px;min-height:36px;font-size:13px}
-.tw{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;max-height:70vh}
-table{border-collapse:collapse;table-layout:fixed;font-size:13px}
-th,td{padding:8px 10px;border-bottom:1px solid var(--line);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
-th{position:sticky;top:0;background:var(--rojo);color:#fff;cursor:pointer;user-select:none;position:sticky}
+body{margin:0;font-family:system-ui,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;flex:none}
+header{background:#fff;text-align:center;padding:10px 12px;border-bottom:4px solid var(--v);box-shadow:0 3px 0 var(--r)}
+header img{height:76px;max-width:70%;object-fit:contain}
+h1{margin:4px 0 0;font-size:clamp(1.15rem,4.5vw,1.8rem);font-weight:800;color:var(--tx);letter-spacing:.5px}
+h2.sub{margin:2px 0 0;font-size:clamp(.85rem,3vw,1.05rem);font-weight:500;color:var(--g)}
+main{max-width:1400px;margin:0 auto;padding:12px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-bottom:12px}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:8px 12px;border-radius:99px;font-weight:700;font-size:.85rem;background:var(--vl);color:#3d6b0c}
+.pill.off{background:var(--rl);color:var(--r)}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px 16px;min-height:46px;font-weight:700;display:inline-flex;gap:6px;align-items:center;justify-content:center;background:var(--v);color:#fff}
+button.sec{background:#fff;color:var(--g);border:2px solid var(--g)}
+button.red{background:var(--r)}
+button.sm{min-height:36px;padding:6px 10px;border-radius:8px}
+.grid3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 4px #0002;border-top:5px solid var(--v)}
+.card:nth-child(2){border-top-color:var(--g)}.card:nth-child(3){border-top-color:var(--r)}
+.card h3{margin:0 0 8px;font-size:.9rem;color:var(--g);display:flex;gap:6px;align-items:center;text-transform:uppercase}
+.big{font-size:2rem;font-weight:800}
+.st{display:grid;grid-template-columns:90px 1fr 44px;gap:6px;align-items:center;padding:4px;margin:2px 0;border-radius:8px;cursor:pointer;font-size:.85rem}
+.st:hover,.st.on{background:var(--vl)}
+.st .b{height:12px;border-radius:6px;background:#eee;overflow:hidden}.st .b i{display:block;height:100%;background:var(--v)}
+.st span:last-child{text-align:right;font-weight:700}.st span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filters{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:14px 0;background:#fff;padding:12px;border-radius:16px;box-shadow:0 1px 4px #0002}
+.filters .q{grid-column:1/-1}
+input,select{font:inherit;width:100%;min-height:46px;padding:8px 12px;border:2px solid #d8d4cc;border-radius:12px;background:#fff;color:var(--tx)}
+input:focus,select:focus{outline:3px solid #78BE2066;border-color:var(--v)}
+label{font-size:.78rem;font-weight:700;color:var(--g);display:block;margin-bottom:2px}
+h2.sec{margin:18px 0 8px;font-size:1.1rem;display:flex;gap:8px;align-items:center;color:var(--tx)}
+.fichas{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.ficha{background:#fff;border-radius:16px;padding:12px;box-shadow:0 1px 4px #0002;border-left:6px solid var(--v)}
+.ficha.e{border-left-color:var(--r)}
+.ficha h4{margin:0 0 6px;font-size:1rem;display:flex;justify-content:space-between;gap:6px}
+.ficha dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:.85rem}
+.ficha dt{color:var(--g);font-weight:700;font-size:.72rem;align-self:center}.ficha dd{margin:0;text-align:right;word-break:break-word}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.72rem;font-weight:800;background:var(--vl);color:#3d6b0c}
+.tag.p{background:#fff3cd;color:#8a6d00}.tag.e{background:var(--rl);color:var(--r)}.tag.s{background:var(--vl);color:#3d6b0c}
+.tw{overflow:auto;background:#fff;border-radius:16px;box-shadow:0 1px 4px #0002;max-height:70vh}
+table{border-collapse:collapse;table-layout:fixed;min-width:100%;font-size:.85rem}
+th{position:sticky;top:0;background:var(--g);color:#fff;text-align:left;padding:10px 8px;cursor:pointer;user-select:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:1}
 th .rz{position:absolute;right:0;top:0;bottom:0;width:8px;cursor:col-resize;touch-action:none}
-th .rz:hover{background:rgba(255,255,255,.5)}
-tr:nth-child(even) td{background:var(--verde-c)}
-dialog{border:0;border-radius:16px;padding:16px;width:min(560px,94vw);max-height:92vh}
-dialog::backdrop{background:rgba(0,0,0,.45)}
-dialog h2{margin:0 0 10px;color:var(--rojo)}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fgrid .full{grid-column:1/-1}
-.err-msg{color:var(--rojo);font-size:12px;min-height:14px;margin-top:2px}
-#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#333;color:#fff;padding:12px 18px;border-radius:12px;z-index:99;display:none;max-width:90vw;font-size:14px}
-#toast.e{background:var(--rojo)}#toast.o{background:#3d6a0c}
-@media(max-width:480px){.fgrid{grid-template-columns:1fr}.top{position:static;margin-left:8px}header.memb{flex-wrap:wrap;gap:6px;justify-content:center}}
+td{padding:8px;border-bottom:1px solid #eee;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tr:nth-child(even) td{background:#faf9f6}
+.pager{display:flex;gap:8px;align-items:center;justify-content:center;margin:10px 0;flex-wrap:wrap}
+.pager select{width:auto}
+dialog{border:0;border-radius:18px;padding:16px;width:min(560px,94vw);max-height:92vh;box-shadow:0 8px 40px #0006}
+dialog::backdrop{background:#0006}
+.fg{display:grid;gap:8px;grid-template-columns:1fr 1fr}.fg .w{grid-column:1/-1}
+.err{color:var(--r);font-size:.75rem;min-height:1em;font-weight:600}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--tx);color:#fff;padding:12px 18px;border-radius:12px;z-index:99;display:none;max-width:90vw;font-weight:600}
+.ob{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:.85rem}
+.empty{text-align:center;color:var(--g);padding:24px}
+@media(max-width:520px){.fg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header class="memb">
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="wifi" viewBox="0 0 24 24"><path d="M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M2 9a15 15 0 0 1 20 0M12 20h.01"/></symbol>
+<symbol id="off" viewBox="0 0 24 24"><path d="M1 1l22 22M16.7 11.1A10 10 0 0 1 19 12.5M5 12.5a10 10 0 0 1 5.2-2.4M8.5 16a5 5 0 0 1 7 0M12 20h.01"/></symbol>
+<symbol id="sync" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6M3.5 9a9 9 0 0 1 15-3.4L23 10M1 14l4.5 4.4A9 9 0 0 0 20.5 15"/></symbol>
+<symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+<symbol id="leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10zM2 21c0-3 1.9-5.5 6-7"/></symbol>
+<symbol id="list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+<symbol id="users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+<symbol id="award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.9L17 23l-5-3-5 3 1.5-9.1"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+</defs></svg>
+
+<header>
   <img src="LOGO_HUARMEY.png" alt="Agrícola Huarmey">
-  <div class="top"><span id="net" class="status">● En línea</span></div>
+  <h1>CATEGORIZACIÓN DE COSECHADORES</h1>
+  <h2 class="sub">Dashboard de la categorización del año 2026 A +</h2>
 </header>
-<h1>CATEGORIZACIÓN DE COSECHADORES</h1>
-<p class="sub">Dashboard de la categorización del año 2026 a más</p>
 
 <main>
   <div class="bar">
-    <button class="btn" id="bSync">🔄 Sincronizar <span id="pend"></span></button>
-    <button class="btn rojo" id="bNew">➕ Nuevo registro</button>
-    <button class="btn gris" id="bCfg">⚙ Configuración</button>
+    <span id="net" class="pill"><svg class="i"><use href="#wifi"/></svg><span>En línea</span></span>
+    <button id="bPend" class="sec"><svg class="i"><use href="#clock"/></svg><span id="nPend">0 pendientes</span></button>
+    <button id="bSync"><svg class="i"><use href="#sync"/></svg>Sincronizar</button>
+    <button id="bNew" class="red"><svg class="i"><use href="#plus"/></svg>Nuevo registro</button>
+    <button id="bCfg" class="sec"><svg class="i"><use href="#gear"/></svg>Conexión</button>
+    <span id="last" style="font-size:.78rem;color:var(--g)"></span>
   </div>
 
-  <section class="totales" id="totales"></section>
+  <section class="grid3" id="totals"></section>
 
-  <section class="filtros">
-    <div style="grid-column:1/-1"><label for="q">🔎 BUSCAR POR DNI O NOMBRE</label><input id="q" type="search" placeholder="Ej: 45678912 o PEREZ" autocomplete="off"></div>
-    <div><label>MODALIDAD</label><select id="fMod"></select></div>
-    <div><label>HISTORICO</label><select id="fHis"></select></div>
-    <div><label>CATEG. 2026</label><select id="fCat"></select></div>
-    <div style="align-self:end"><button class="btn gris" id="bClr" style="width:100%">✖ Limpiar</button></div>
+  <section class="filters">
+    <div class="q"><label for="fq">Buscar por DNI o NOMBRE</label><input id="fq" type="search" placeholder="Escribe DNI o nombre del trabajador…" autocomplete="off"></div>
+    <div><label for="fm">MODALIDAD</label><select id="fm"></select></div>
+    <div><label for="fh">HISTORICO</label><select id="fh"></select></div>
+    <div><label for="fc">CATEG. 2026</label><select id="fc"></select></div>
+    <div style="align-self:end"><button id="bClr" class="sec" style="width:100%">Limpiar filtros</button></div>
   </section>
-  <div class="count" id="count"></div>
 
-  <section class="cards" id="cards"></section>
+  <h2 class="sec"><svg class="i"><use href="#users"/></svg>Fichas <span id="cnt" class="tag"></span></h2>
+  <section class="fichas" id="fichas"></section>
+  <div class="pager"><button id="bMore" class="sec">Ver más fichas</button></div>
 
-  <h3 style="color:var(--rojo)">📋 Tabla general</h3>
+  <h2 class="sec"><svg class="i"><use href="#list"/></svg>Tabla de registros</h2>
   <div class="tw"><table id="tbl"></table></div>
+  <div class="pager">
+    <button id="pPrev" class="sec sm">‹</button><span id="pInfo"></span><button id="pNext" class="sec sm">›</button>
+    <select id="pSize"><option>25</option><option selected>50</option><option>100</option><option>200</option></select>
+  </div>
 </main>
 
-<dialog id="dCfg">
-  <h2>⚙ Configuración</h2>
-  <label>URL de Apps Script (termina en /exec)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/.../exec">
-  <label style="margin-top:8px">Token de acceso</label><input id="cTok" type="password" placeholder="Token secreto" autocomplete="off">
-  <div class="bar" style="margin:14px 0 0"><button class="btn" id="cSave">Guardar</button><button class="btn gris" onclick="this.closest('dialog').close()">Cerrar</button></div>
-</dialog>
+<dialog id="dForm"><form method="dialog" id="fForm" novalidate>
+  <h3 id="fTitle" style="margin:0 0 10px"></h3><div class="fg" id="fFields"></div>
+  <div class="row"><button type="button" class="sec" id="fCancel">Cancelar</button><button type="submit">Guardar</button></div>
+</form></dialog>
 
-<dialog id="dForm">
-  <h2 id="fTitle">Registro</h2>
-  <form id="frm" novalidate><div class="fgrid" id="fields"></div>
-    <div class="bar" style="margin:14px 0 0"><button class="btn" type="submit">💾 Guardar</button><button class="btn gris" type="button" onclick="this.closest('dialog').close()">Cancelar</button></div>
-  </form>
-</dialog>
+<dialog id="dCfg"><h3 style="margin:0 0 10px">Conexión con Google Sheets</h3>
+  <label for="cUrl">URL de la Web App (Apps Script)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/…/exec">
+  <label for="cTok" style="margin-top:8px">Token de acceso</label><input id="cTok" type="password" autocomplete="off">
+  <div class="row"><button class="sec" id="cCancel">Cerrar</button><button id="cSave">Guardar y actualizar</button></div></dialog>
+
+<dialog id="dPend"><h3 style="margin:0 0 10px">Registros locales</h3><div id="obList"></div>
+  <div class="row"><button class="sec sm" id="oClean">Limpiar sincronizados</button><button class="sm" id="oRetry">Reintentar errores</button><button class="sec sm" id="oClose">Cerrar</button></div></dialog>
 <div id="toast"></div>
 
 <script>
-'use strict';
-/* ========= Módulo: constantes ========= */
+/* ============ CONFIG ============ */
+const CONFIG = { API_URL: '', TOKEN: '', SYNC_MS: 60000, TIMEOUT_MS: 25000, CARDS_STEP: 24 };
 const FIELDS = ['DNI','NOMBRE TRABAJADOR','MODALIDAD','HISTORICO','CUMP. %','TOTAL DIAS','CATEG. 2026','RANGO %','ORDEN_HISTORICO','ASISTENCIA ACTUAL'];
-const NUMERIC = new Set(['CUMP. %','TOTAL DIAS','RANGO %','ORDEN_HISTORICO','ASISTENCIA ACTUAL']);
-const ICON = {'DNI':'🪪','NOMBRE TRABAJADOR':'👤','MODALIDAD':'🧺','HISTORICO':'📜','CUMP. %':'✅','TOTAL DIAS':'📅','CATEG. 2026':'🍎','RANGO %':'📊','ORDEN_HISTORICO':'🔢','ASISTENCIA ACTUAL':'🌱'};
+const CATS = ['MODALIDAD','HISTORICO','CATEG. 2026'];
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-const num = v => { const n = parseFloat(String(v).replace('%','').replace(',','.')); return isNaN(n) ? null : n; };
+const ico = n => `<svg class="i"><use href="#${n}"/></svg>`;
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3500)}
 
-/* ========= Módulo: IndexedDB ========= */
+/* ============ DB (IndexedDB) ============ */
 const DB = (() => {
   let db;
-  const open = () => new Promise((res, rej) => {
-    const r = indexedDB.open('huarmey_categorizacion', 1);
-    r.onupgradeneeded = () => { r.result.createObjectStore('workers', {keyPath:'DNI'}); r.result.createObjectStore('meta', {keyPath:'k'}); };
-    r.onsuccess = () => { db = r.result; res(); }; r.onerror = () => rej(r.error);
+  const open = () => db ? Promise.resolve(db) : new Promise((ok, ko) => {
+    const r = indexedDB.open('huarmey-categorizacion', 1);
+    r.onupgradeneeded = () => { const d = r.result;
+      d.createObjectStore('maestro', {keyPath:'DNI'});
+      d.createObjectStore('outbox', {keyPath:'id', autoIncrement:true});
+      d.createObjectStore('meta', {keyPath:'k'}); };
+    r.onsuccess = () => { db = r.result; ok(db); }; r.onerror = () => ko(r.error);
   });
-  const tx = (st, mode, fn) => new Promise((res, rej) => {
-    const t = db.transaction(st, mode), s = t.objectStore(st), q = fn(s);
-    t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error);
-  });
-  return { open,
-    all: () => tx('workers','readonly',s => s.getAll()),
-    put: r => tx('workers','readwrite',s => s.put(r)),
-    putMany: rs => tx('workers','readwrite',s => rs.forEach(r => s.put(r))),
-    getMeta: async k => (await tx('meta','readonly',s => s.get(k)))?.v,
-    setMeta: (k,v) => tx('meta','readwrite',s => s.put({k,v})) };
+  const run = async (store, mode, fn) => { const d = await open();
+    return new Promise((ok, ko) => { const t = d.transaction(store, mode); let out; const q = fn(t.objectStore(store));
+      if (q) q.onsuccess = () => out = q.result; t.oncomplete = () => ok(out); t.onerror = t.onabort = () => ko(t.error); }); };
+  return {
+    all: s => run(s, 'readonly', o => o.getAll()),
+    get: (s, k) => run(s, 'readonly', o => o.get(k)),
+    put: (s, v) => run(s, 'readwrite', o => o.put(v)),
+    del: (s, k) => run(s, 'readwrite', o => o.delete(k)),
+    replace: async (s, arr) => { const d = await open();
+      return new Promise((ok, ko) => { const t = d.transaction(s, 'readwrite'), o = t.objectStore(s); o.clear(); arr.forEach(v => o.put(v));
+        t.oncomplete = ok; t.onerror = t.onabort = () => ko(t.error); }); }
+  };
 })();
 
-/* ========= Módulo: sincronización con Google Sheets (Apps Script) ========= */
-const Sync = (() => {
-  let busy = false;
-  const cfg = async () => ({url: await DB.getMeta('url'), tok: await DB.getMeta('tok')});
-  const clean = r => { const o = {}; FIELDS.forEach(f => o[f] = r[f] ?? ''); return o; };
-  async function run(manual) {
-    if (busy) return; const {url, tok} = await cfg();
-    if (!url || !tok) { if (manual) toast('Configura la URL y el token (⚙)', 'e'); return; }
-    if (!navigator.onLine) { if (manual) toast('Sin conexión. Se sincronizará al volver internet.'); return; }
-    busy = true; $('#bSync').disabled = true;
+/* ============ API (Google Apps Script) ============ */
+const Api = {
+  cfg(){ return { url: localStorage.getItem('apiUrl') || CONFIG.API_URL, token: localStorage.getItem('apiToken') || CONFIG.TOKEN }; },
+  async call(opts){
+    const {url, token} = this.cfg();
+    if (!url) throw new Error('Configura la URL de conexión (botón Conexión).');
+    const ac = new AbortController(), to = setTimeout(() => ac.abort(), CONFIG.TIMEOUT_MS);
     try {
-      // 1) Enviar pendientes/error. text/plain evita preflight CORS en Apps Script.
-      const todos = await DB.all(), pend = todos.filter(r => r._sync !== 'Sincronizado');
-      for (let i = 0; i < pend.length; i += 50) {
-        const lote = pend.slice(i, i + 50);
-        const r = await fetchJSON(url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({token: tok, records: lote.map(clean)})});
-        if (!r.ok) throw new Error(r.error || 'Error del servidor');
-        for (const x of r.results) {
-          const rec = lote.find(l => l.DNI === x.dni); if (!rec) continue;
-          rec._sync = x.ok ? 'Sincronizado' : 'Error'; rec._err = x.ok ? '' : x.error; await DB.put(rec);
-        }
-      }
-      // 2) Descargar datos vigentes (no pisa registros locales sin sincronizar)
-      const r = await fetchJSON(`${url}?action=list&token=${encodeURIComponent(tok)}`);
-      if (!r.ok) throw new Error(r.error || 'Error del servidor');
-      const locales = new Map((await DB.all()).map(x => [x.DNI, x]));
-      const nuevos = r.data.filter(d => !(locales.get(d.DNI) && locales.get(d.DNI)._sync !== 'Sincronizado')).map(d => ({...d, _sync:'Sincronizado'}));
-      await DB.putMany(nuevos); await DB.setMeta('last', Date.now());
-      if (manual) toast('Sincronización completada', 'o');
-    } catch (e) { toast('No se pudo sincronizar: ' + e.message, 'e'); }
-    finally { busy = false; $('#bSync').disabled = false; await App.load(); }
-  }
-  async function fetchJSON(url, opt) {
-    const c = new AbortController(), t = setTimeout(() => c.abort(), 30000);
-    try { const res = await fetch(url, {...opt, signal: c.signal, redirect:'follow'}); if (!res.ok) throw new Error('HTTP ' + res.status); return await res.json(); }
-    finally { clearTimeout(t); }
-  }
-  return { run };
-})();
-
-/* ========= Módulo: UI ========= */
-let DATA = [], sortF = null, sortAsc = true;
-const widths = JSON.parse(localStorage.getItem('colw') || '{}');
-function toast(m, t='') { const e = $('#toast'); e.textContent = m; e.className = t; e.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => e.style.display = 'none', 3500); }
-
-const App = {
-  async load() { DATA = await DB.all(); this.fillFilters(); this.render(); },
-  fillFilters() {
-    [['#fMod','MODALIDAD'],['#fHis','HISTORICO'],['#fCat','CATEG. 2026']].forEach(([id, f]) => {
-      const s = $(id), cur = s.value, vals = [...new Set(DATA.map(d => d[f]).filter(v => v !== ''))].sort((a,b) => String(a).localeCompare(b, 'es', {numeric:true}));
-      s.innerHTML = `<option value="">Todos</option>` + vals.map(v => `<option>${esc(v)}</option>`).join('');
-      s.value = vals.includes(cur) ? cur : '';
-    });
+      const r = opts.body === undefined
+        ? await fetch(`${url}?action=${opts.action}&token=${encodeURIComponent(token)}`, {signal: ac.signal})
+        : await fetch(url, {method:'POST', signal: ac.signal, headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({action: opts.action, token, ...opts.body})});
+      const j = await r.json(); if (!j.ok) throw new Error(j.error || 'Error del servidor'); return j;
+    } catch (e) { throw e.name === 'AbortError' ? new Error('Tiempo de espera agotado') : e; }
+    finally { clearTimeout(to); }
   },
-  filtered() {
-    const q = norm($('#q').value.trim()), m = $('#fMod').value, h = $('#fHis').value, c = $('#fCat').value;
-    return DATA.filter(d => (!q || norm(d.DNI).includes(q) || norm(d['NOMBRE TRABAJADOR']).includes(q)) && (!m || d.MODALIDAD === m) && (!h || d.HISTORICO === h) && (!c || d['CATEG. 2026'] === c));
-  },
-  render() {
-    const list = this.filtered(), pend = DATA.filter(d => d._sync !== 'Sincronizado').length;
-    $('#pend').textContent = pend ? `(${pend})` : '';
-    $('#count').textContent = `${list.length} de ${DATA.length} registros`;
-    // Totales (sobre el filtro actual): clic en una fila aplica el filtro
-    $('#totales').innerHTML = [['MODALIDAD','🧺','#fMod'],['HISTORICO','📜','#fHis'],['CATEG. 2026','🍎','#fCat']].map(([f, ic, id]) => {
-      const cnt = {}; list.forEach(d => { const k = d[f] || '(vacío)'; cnt[k] = (cnt[k] || 0) + 1; });
-      const mx = Math.max(1, ...Object.values(cnt)), sel = $(id).value;
-      const rows = Object.entries(cnt).sort((a,b) => b[1] - a[1]).map(([k, n]) => `<div class="row ${k === sel ? 'sel' : ''}" data-id="${id}" data-v="${esc(k)}"><span style="min-width:90px">${esc(k)}</span><span class="meter"><i style="width:${n / mx * 100}%"></i></span><b>${n}</b></div>`).join('');
-      return `<div class="tot"><h3>${ic} ${f}</h3>${rows || '<small>Sin datos</small>'}</div>`;
-    }).join('');
-    // Fichas
-    $('#cards').innerHTML = list.length ? list.map(d => `<article class="card ${d._sync === 'Pendiente' ? 'pend' : d._sync === 'Error' ? 'err' : ''}">
-      <h4>${ICON['NOMBRE TRABAJADOR']} ${esc(d['NOMBRE TRABAJADOR'])}</h4>
-      <dl>${FIELDS.filter(f => f !== 'NOMBRE TRABAJADOR').map(f => `<dt>${ICON[f]} ${f}</dt><dd>${esc(d[f])}</dd>`).join('')}</dl>
-      <div class="foot"><span class="tag t-${d._sync}" title="${esc(d._err || '')}">${d._sync}${d._err ? ': ' + esc(d._err) : ''}</span><button class="btn gris" data-edit="${esc(d.DNI)}">✏ Editar</button></div></article>`).join('')
-      : '<p style="grid-column:1/-1;text-align:center;color:var(--gris)">Sin registros. Configura ⚙ y sincroniza, o crea uno nuevo.</p>';
-    this.table(list);
-  },
-  table(list) {
-    if (sortF) { const nm = NUMERIC.has(sortF); list = [...list].sort((a,b) => { let x = a[sortF], y = b[sortF];
-      if (nm) { x = num(x); y = num(y); if (x === null) return 1; if (y === null) return -1; return sortAsc ? x - y : y - x; }
-      return sortAsc ? String(x).localeCompare(y, 'es', {numeric:true}) : String(y).localeCompare(x, 'es', {numeric:true}); }); }
-    const cg = `<colgroup>${FIELDS.map(f => `<col style="width:${widths[f] || (f === 'NOMBRE TRABAJADOR' ? 240 : 120)}px">`).join('')}</colgroup>`;
-    const th = FIELDS.map(f => `<th data-f="${f}">${f} ${sortF === f ? (sortAsc ? '▲' : '▼') : ''}<span class="rz"></span></th>`).join('');
-    $('#tbl').innerHTML = cg + `<thead><tr>${th}</tr></thead><tbody>${list.map(d => `<tr>${FIELDS.map(f => `<td title="${esc(d[f])}">${esc(d[f])}</td>`).join('')}</tr>`).join('')}</tbody>`;
-    const tw = FIELDS.reduce((s, f) => s + (widths[f] || (f === 'NOMBRE TRABAJADOR' ? 240 : 120)), 0); $('#tbl').style.width = tw + 'px';
-  },
-  openForm(dni) {
-    const d = dni ? DATA.find(x => x.DNI === dni) : {};
-    $('#fTitle').textContent = dni ? 'Editar registro' : 'Nuevo registro';
-    $('#fields').innerHTML = FIELDS.map(f => `<div class="${f === 'NOMBRE TRABAJADOR' ? 'full' : ''}"><label>${ICON[f]} ${f}</label>
-      <input name="${f}" value="${esc(d[f] || '')}" ${f === 'DNI' ? 'inputmode="numeric" maxlength="8" ' + (dni ? 'readonly' : '') : NUMERIC.has(f) ? 'inputmode="decimal"' : ''}><div class="err-msg"></div></div>`).join('');
-    $('#dForm').showModal();
-  },
-  validate(o) {
-    const e = {};
-    if (!/^\d{8}$/.test(o.DNI)) e.DNI = 'El DNI debe tener 8 dígitos';
-    if (o['NOMBRE TRABAJADOR'].trim().length < 3) e['NOMBRE TRABAJADOR'] = 'Ingresa el nombre (mín. 3 letras)';
-    ['MODALIDAD','HISTORICO','CATEG. 2026'].forEach(f => { if (!o[f].trim()) e[f] = 'Campo obligatorio'; });
-    NUMERIC.forEach(f => { if (o[f].trim() !== '' && num(o[f]) === null) e[f] = 'Debe ser numérico'; });
-    if (o['TOTAL DIAS'].trim() !== '' && (num(o['TOTAL DIAS']) < 0 || num(o['TOTAL DIAS']) > 366)) e['TOTAL DIAS'] = 'Entre 0 y 366';
-    return e;
-  }
+  list(){ return this.call({action:'list'}); },
+  upsert(records){ return this.call({action:'upsert', body:{records}}); }
 };
 
-/* ========= Eventos ========= */
-$('#bNew').onclick = () => App.openForm();
-$('#bSync').onclick = () => Sync.run(true);
-$('#bClr').onclick = () => { $('#q').value = ''; ['#fMod','#fHis','#fCat'].forEach(i => $(i).value = ''); App.render(); };
-['#q','#fMod','#fHis','#fCat'].forEach(i => $(i).addEventListener('input', () => App.render()));
-$('#totales').onclick = e => { const r = e.target.closest('.row'); if (!r) return; const s = $(r.dataset.id); s.value = s.value === r.dataset.v ? '' : r.dataset.v; App.render(); };
-$('#cards').onclick = e => { const b = e.target.closest('[data-edit]'); if (b) App.openForm(b.dataset.edit); };
-$('#bCfg').onclick = async () => { $('#cUrl').value = (await DB.getMeta('url')) || ''; $('#cTok').value = (await DB.getMeta('tok')) || ''; $('#dCfg').showModal(); };
-$('#cSave').onclick = async () => {
-  const u = $('#cUrl').value.trim(), t = $('#cTok').value.trim();
-  if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)) return toast('La URL debe ser de Apps Script y terminar en /exec', 'e');
-  if (t.length < 8) return toast('Token inválido', 'e');
-  await DB.setMeta('url', u); await DB.setMeta('tok', t); $('#dCfg').close(); toast('Configuración guardada', 'o'); Sync.run(true);
-};
-$('#frm').onsubmit = async ev => {
-  ev.preventDefault(); const o = {}; FIELDS.forEach(f => o[f] = $('#frm').elements[f].value.trim());
-  const errs = App.validate(o);
-  document.querySelectorAll('#fields input').forEach(i => { const m = errs[i.name]; i.classList.toggle('bad', !!m); i.nextElementSibling.textContent = m || ''; });
-  if (Object.keys(errs).length) return toast('Revisa los campos marcados', 'e');
-  const exists = DATA.find(d => d.DNI === o.DNI), isNew = !$('#frm').elements.DNI.readOnly;
-  if (isNew && exists) return toast('Ya existe un registro con ese DNI', 'e');
-  await DB.put({...o, _sync: 'Pendiente', _err: ''}); $('#dForm').close();
-  toast(navigator.onLine ? 'Guardado. Sincronizando…' : 'Guardado sin conexión (Pendiente)', 'o'); await App.load(); Sync.run(false);
-};
-// Tabla: ordenar y redimensionar columnas (mouse y táctil)
-$('#tbl').addEventListener('click', e => { if (e.target.classList.contains('rz')) return; const th = e.target.closest('th'); if (!th) return;
-  const f = th.dataset.f; sortAsc = sortF === f ? !sortAsc : true; sortF = f; App.render(); });
-$('#tbl').addEventListener('pointerdown', e => {
-  if (!e.target.classList.contains('rz')) return; e.preventDefault(); const th = e.target.parentElement, f = th.dataset.f, x0 = e.clientX, w0 = th.offsetWidth;
-  const mv = ev => { const w = Math.max(60, w0 + ev.clientX - x0); widths[f] = w; const i = FIELDS.indexOf(f); $('#tbl').querySelectorAll('col')[i].style.width = w + 'px'; $('#tbl').style.width = FIELDS.reduce((s, k) => s + (widths[k] || (k === 'NOMBRE TRABAJADOR' ? 240 : 120)), 0) + 'px'; };
-  const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); localStorage.setItem('colw', JSON.stringify(widths)); };
-  addEventListener('pointermove', mv); addEventListener('pointerup', up);
-});
-// Conexión
-function net() { const on = navigator.onLine; const n = $('#net'); n.textContent = on ? '● En línea' : '● Sin conexión'; n.classList.toggle('off', !on); }
-addEventListener('online', () => { net(); toast('Conexión recuperada'); Sync.run(false); });
-addEventListener('offline', net);
+/* ============ STATE ============ */
+const S = { base: [], rows: [], outbox: [], f: {q:'',MODALIDAD:'',HISTORICO:'','CATEG. 2026':''}, sort: {k:null,dir:1}, page: 0, cards: CONFIG.CARDS_STEP, syncing: false,
+  widths: JSON.parse(localStorage.getItem('colw') || '{}') };
 
-/* ========= Inicio ========= */
+const num = v => { const n = parseFloat(String(v ?? '').replace('%','').replace(',','.')); return isNaN(n) ? null : n; };
+const cmp = (a, b) => { const x = num(a), y = num(b);
+  if (x !== null && y !== null) return x - y;
+  return String(a ?? '').localeCompare(String(b ?? ''), 'es', {numeric:true, sensitivity:'base'}); };
+
+async function rebuild(){
+  S.base = await DB.all('maestro'); S.outbox = await DB.all('outbox');
+  const m = new Map(S.base.map(r => [r.DNI, {...r}]));
+  S.outbox.filter(o => o.status !== 'Sincronizado').sort((a,b) => a.id - b.id).forEach(o => m.set(o.dni, {...(m.get(o.dni)||{}), ...o.data, _e:o.status}));
+  S.rows = [...m.values()];
+  $('#nPend').textContent = `${S.outbox.filter(o => o.status === 'Pendiente').length} pendientes` + (S.outbox.some(o => o.status === 'Error') ? ' · con error' : '');
+  fillSelects(); render();
+}
+
+/* ============ FILTROS ============ */
+function fillSelects(){
+  [['#fm','MODALIDAD'],['#fh','HISTORICO'],['#fc','CATEG. 2026']].forEach(([sel,k]) => {
+    const vals = [...new Set(S.rows.map(r => r[k]).filter(v => v !== '' && v != null))].sort(cmp);
+    $(sel).innerHTML = `<option value="">Todos</option>` + vals.map(v => `<option>${esc(v)}</option>`).join('');
+    $(sel).value = vals.includes(S.f[k]) ? S.f[k] : '';
+  });
+}
+const filtered = () => { const q = S.f.q.trim().toLowerCase();
+  let r = S.rows.filter(x => (!q || String(x.DNI).toLowerCase().includes(q) || String(x['NOMBRE TRABAJADOR']).toLowerCase().includes(q)) && CATS.every(k => !S.f[k] || x[k] === S.f[k]));
+  if (S.sort.k) r = r.slice().sort((a, b) => cmp(a[S.sort.k], b[S.sort.k]) * S.sort.dir);
+  return r; };
+
+/* ============ RENDER ============ */
+function renderTotals(){
+  $('#totals').innerHTML = CATS.map((k, i) => {
+    const c = {}; S.rows.forEach(r => { const v = r[k] || '(vacío)'; c[v] = (c[v]||0) + 1; });
+    const e = Object.entries(c).sort((a,b) => b[1]-a[1]), mx = e[0] ? e[0][1] : 1;
+    return `<div class="card"><h3>${ico(['leaf','clock','award'][i])}${k}</h3><div class="big">${S.rows.length}<small style="font-size:.8rem;color:var(--g)"> trabajadores</small></div>` +
+      e.slice(0, 8).map(([v, n]) => `<div class="st ${S.f[k] === v ? 'on' : ''}" data-k="${esc(k)}" data-v="${esc(v)}"><span title="${esc(v)}">${esc(v)}</span><span class="b"><i style="width:${n/mx*100}%;background:${['var(--v)','var(--g)','var(--r)'][i]}"></i></span><span>${n}</span></div>`).join('') + `</div>`;
+  }).join('');
+}
+const tagE = e => e ? `<span class="tag ${e === 'Error' ? 'e' : 'p'}">${e}</span>` : '';
+function render(){
+  renderTotals();
+  const rows = filtered();
+  $('#cnt').textContent = `${rows.length} de ${S.rows.length}`;
+  $('#fichas').innerHTML = rows.length ? rows.slice(0, S.cards).map(r => `<article class="ficha ${r._e === 'Error' ? 'e' : ''}"><h4><span>${esc(r['NOMBRE TRABAJADOR'])}</span>${tagE(r._e)}</h4><dl>` +
+    FIELDS.map(k => `<dt>${k}</dt><dd>${esc(r[k])}</dd>`).join('') + `</dl><div style="margin-top:8px;text-align:right"><button class="sec sm" data-edit="${esc(r.DNI)}">${ico('edit')}Editar</button></div></article>`).join('') : `<div class="empty">Sin resultados</div>`;
+  $('#bMore').style.display = rows.length > S.cards ? '' : 'none';
+  renderTable(rows);
+}
+function renderTable(rows){
+  const size = +$('#pSize').value, pages = Math.max(1, Math.ceil(rows.length / size)); S.page = Math.min(S.page, pages - 1);
+  const cols = ['', ...FIELDS], w = k => S.widths[k] || (k === 'NOMBRE TRABAJADOR' ? 260 : k === '' ? 60 : 130);
+  $('#tbl').innerHTML = `<colgroup>${cols.map(k => `<col data-k="${esc(k)}" style="width:${w(k)}px">`).join('')}</colgroup><thead><tr>` +
+    cols.map(k => `<th data-s="${esc(k)}">${k ? esc(k) + (S.sort.k === k ? (S.sort.dir > 0 ? ' ▲' : ' ▼') : '') : ''}<div class="rz" data-r="${esc(k)}"></div></th>`).join('') + `</tr></thead><tbody>` +
+    rows.slice(S.page * size, (S.page + 1) * size).map(r => `<tr><td><button class="sec sm" data-edit="${esc(r.DNI)}" aria-label="Editar">${ico('edit')}</button></td>` +
+      FIELDS.map(k => `<td title="${esc(r[k])}">${esc(r[k])}${k === 'DNI' ? ' ' + tagE(r._e) : ''}</td>`).join('') + `</tr>`).join('') + `</tbody>`;
+  $('#pInfo').textContent = `Página ${S.page + 1} de ${pages}`;
+}
+
+/* ============ EVENTOS UI ============ */
+$('#totals').onclick = e => { const d = e.target.closest('.st'); if (!d) return; const {k, v} = d.dataset; S.f[k] = S.f[k] === v ? '' : (v === '(vacío)' ? '' : v); fillSelects(); S.page = 0; S.cards = CONFIG.CARDS_STEP; render(); };
+$('#fq').oninput = e => { S.f.q = e.target.value; S.page = 0; S.cards = CONFIG.CARDS_STEP; render(); };
+[['#fm','MODALIDAD'],['#fh','HISTORICO'],['#fc','CATEG. 2026']].forEach(([s,k]) => $(s).onchange = e => { S.f[k] = e.target.value; S.page = 0; S.cards = CONFIG.CARDS_STEP; render(); });
+$('#bClr').onclick = () => { S.f = {q:'',MODALIDAD:'',HISTORICO:'','CATEG. 2026':''}; $('#fq').value = ''; fillSelects(); S.page = 0; render(); };
+$('#bMore').onclick = () => { S.cards += CONFIG.CARDS_STEP; render(); };
+$('#pPrev').onclick = () => { S.page = Math.max(0, S.page - 1); render(); };
+$('#pNext').onclick = () => { S.page++; render(); };
+$('#pSize').onchange = () => { S.page = 0; render(); };
+document.addEventListener('click', e => { const b = e.target.closest('[data-edit]'); if (b) openForm(b.dataset.edit); });
+$('#tbl').addEventListener('click', e => { if (e.target.closest('.rz')) return; const th = e.target.closest('th'); if (!th || !th.dataset.s) return;
+  const k = th.dataset.s; S.sort = S.sort.k === k ? {k, dir: -S.sort.dir} : {k, dir: 1}; render(); });
+$('#tbl').addEventListener('pointerdown', e => { const h = e.target.closest('.rz'); if (!h) return; e.preventDefault(); e.stopPropagation();
+  const col = $(`col[data-k="${CSS.escape(h.dataset.r)}"]`), x0 = e.clientX, w0 = col.offsetWidth; h.setPointerCapture(e.pointerId);
+  const mv = ev => col.style.width = Math.max(50, w0 + ev.clientX - x0) + 'px';
+  const up = () => { h.removeEventListener('pointermove', mv); h.removeEventListener('pointerup', up); S.widths[h.dataset.r] = col.offsetWidth; localStorage.setItem('colw', JSON.stringify(S.widths)); };
+  h.addEventListener('pointermove', mv); h.addEventListener('pointerup', up); });
+
+/* ============ FORMULARIO + VALIDACIONES ============ */
+const RULES = {
+  'DNI': v => /^\d{8}$/.test(v) ? '' : 'El DNI debe tener 8 dígitos',
+  'NOMBRE TRABAJADOR': v => v.trim().length >= 3 ? '' : 'Ingresa el nombre completo',
+  'MODALIDAD': v => v.trim() ? '' : 'Campo obligatorio',
+  'HISTORICO': v => v.trim() ? '' : 'Campo obligatorio',
+  'CATEG. 2026': v => v.trim() ? '' : 'Campo obligatorio',
+  'CUMP. %': v => { const n = num(v); return n !== null && n >= 0 && n <= 100 ? '' : 'Valor entre 0 y 100'; },
+  'TOTAL DIAS': v => /^\d{1,3}$/.test(v) ? '' : 'Número entero (0–999)',
+  'ORDEN_HISTORICO': v => /^\d{1,6}$/.test(v) ? '' : 'Número entero',
+  'RANGO %': () => '', 'ASISTENCIA ACTUAL': () => ''
+};
+function openForm(dni){
+  const r = dni ? S.rows.find(x => x.DNI === dni) : {}, edit = !!dni;
+  $('#fTitle').textContent = edit ? 'Editar registro' : 'Nuevo registro';
+  $('#fFields').innerHTML = FIELDS.map((k, i) => { const v = String(r[k] ?? '').replace(k === 'CUMP. %' ? '%' : '\u0000', '');
+    const dl = CATS.includes(k) ? `list="dl${i}"` : '', im = ['DNI','TOTAL DIAS','ORDEN_HISTORICO'].includes(k) ? 'inputmode="numeric"' : k === 'CUMP. %' ? 'inputmode="decimal"' : '';
+    return `<div class="${k === 'NOMBRE TRABAJADOR' ? 'w' : ''}"><label>${k}${['RANGO %','ASISTENCIA ACTUAL'].includes(k) ? '' : ' *'}</label><input name="${esc(k)}" value="${esc(v)}" ${dl} ${im} ${edit && k === 'DNI' ? 'readonly' : ''}><div class="err"></div>` +
+      (dl ? `<datalist id="dl${i}">${[...new Set(S.rows.map(x => x[k]).filter(Boolean))].map(o => `<option value="${esc(o)}">`).join('')}</datalist>` : '') + `</div>`; }).join('');
+  $('#dForm').showModal();
+}
+$('#fCancel').onclick = () => $('#dForm').close();
+$('#fForm').onsubmit = async e => { e.preventDefault(); let ok = true; const data = {};
+  $('#fFields').querySelectorAll('input').forEach(i => { const k = i.name, m = RULES[k](i.value.trim()); i.nextElementSibling.textContent = m; if (m) ok = false; data[k] = i.value.trim(); });
+  if (!ok) return toast('Revisa los campos marcados');
+  if (data['CUMP. %'] !== '') data['CUMP. %'] = num(data['CUMP. %']) + '%';
+  await DB.put('outbox', {dni: data.DNI, data, status: 'Pendiente', ts: Date.now(), error: ''});
+  $('#dForm').close(); await rebuild(); toast(navigator.onLine ? 'Guardado. Sincronizando…' : 'Guardado sin internet (Pendiente)'); sync(); };
+
+/* ============ SINCRONIZACIÓN ============ */
+function setNet(){ const on = navigator.onLine; $('#net').className = 'pill' + (on ? '' : ' off'); $('#net').innerHTML = `${ico(on ? 'wifi' : 'off')}<span>${on ? 'En línea' : 'Sin internet'}</span>`; }
+async function refresh(silent){
+  try { const j = await Api.list(); await DB.replace('maestro', j.rows); await DB.put('meta', {k:'last', v: Date.now()}); await rebuild(); showLast(); if (!silent) toast('Datos actualizados'); }
+  catch (e) { if (!silent) toast('No se pudo actualizar: ' + e.message); }
+}
+async function sync(){
+  if (S.syncing || !navigator.onLine || !Api.cfg().url) return; S.syncing = true;
+  try {
+    const items = (await DB.all('outbox')).filter(o => o.status === 'Pendiente');
+    if (items.length) {
+      const j = await Api.upsert(items.map(o => ({id: o.id, data: o.data})));
+      for (const r of j.results) { const o = items.find(x => x.id === r.id); if (!o) continue; o.status = r.ok ? 'Sincronizado' : 'Error'; o.error = r.error || ''; await DB.put('outbox', o); }
+      const done = (await DB.all('outbox')).filter(o => o.status === 'Sincronizado'); for (const o of done.slice(0, Math.max(0, done.length - 30))) await DB.del('outbox', o.id);
+    }
+    await refresh(true);
+  } catch (e) { toast('Sync pendiente: ' + e.message); }
+  finally { S.syncing = false; await rebuild(); }
+}
+async function showLast(){ const m = await DB.get('meta', 'last'); $('#last').textContent = m ? 'Actualizado: ' + new Date(m.v).toLocaleString('es-PE') : 'Sin datos locales aún'; }
+$('#bSync').onclick = async () => { if (!navigator.onLine) return toast('Sin internet: los cambios quedan guardados'); await sync(); toast('Sincronización terminada'); };
+addEventListener('online', () => { setNet(); sync(); }); addEventListener('offline', setNet);
+setInterval(() => navigator.onLine && sync(), CONFIG.SYNC_MS);
+
+/* ============ CONEXIÓN Y COLA ============ */
+$('#bCfg').onclick = () => { const c = Api.cfg(); $('#cUrl').value = c.url; $('#cTok').value = c.token; $('#dCfg').showModal(); };
+$('#cCancel').onclick = () => $('#dCfg').close();
+$('#cSave').onclick = () => { const u = $('#cUrl').value.trim(); if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)) return toast('URL inválida (debe terminar en /exec)');
+  localStorage.setItem('apiUrl', u); localStorage.setItem('apiToken', $('#cTok').value.trim()); $('#dCfg').close(); sync().then(() => refresh()); };
+async function showOutbox(){
+  const l = (await DB.all('outbox')).sort((a, b) => b.id - a.id);
+  $('#obList').innerHTML = l.length ? l.map(o => `<div class="ob"><span><b>${esc(o.dni)}</b> ${esc(o.data['NOMBRE TRABAJADOR'] || '')}<br><small style="color:var(--g)">${new Date(o.ts).toLocaleString('es-PE')} ${esc(o.error || '')}</small></span><span class="tag ${o.status === 'Error' ? 'e' : o.status === 'Pendiente' ? 'p' : 's'}">${o.status}</span></div>`).join('') : '<div class="empty">No hay registros locales</div>';
+  $('#dPend').showModal();
+}
+$('#bPend').onclick = showOutbox; $('#oClose').onclick = () => $('#dPend').close();
+$('#oRetry').onclick = async () => { for (const o of await DB.all('outbox')) if (o.status === 'Error') { o.status = 'Pendiente'; await DB.put('outbox', o); } await rebuild(); showOutbox(); sync(); };
+$('#oClean').onclick = async () => { for (const o of await DB.all('outbox')) if (o.status === 'Sincronizado') await DB.del('outbox', o.id); await rebuild(); showOutbox(); };
+$('#bNew').onclick = () => openForm();
+
+/* ============ INICIO ============ */
 (async () => {
-  net(); await DB.open(); await App.load();
+  setNet(); await rebuild(); showLast();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js').catch(() => {});
-  Sync.run(false);
-  setInterval(() => Sync.run(false), 5 * 60 * 1000); // refresco cada 5 min cuando hay internet
+  if (!Api.cfg().url) { toast('Configura la conexión con Google Sheets'); }
+  else if (navigator.onLine) { await sync(); if (!S.base.length) refresh(true); }
 })();
 </script>
 </body>
