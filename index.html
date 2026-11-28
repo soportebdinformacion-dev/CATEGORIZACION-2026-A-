@@ -1,434 +1,297 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <meta name="theme-color" content="#78BE20" />
-  <meta name="description" content="Categorización de Cosechadores 2026+ - Agrícola Huarmey" />
-  <title>CATEGORIZACIÓN DE COSECHADORES | Agrícola Huarmey</title>
-
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="icon" type="image/png" href="./LOGO HUARMEY.png" />
-  <link rel="apple-touch-icon" href="./LOGO HUARMEY.png" />
-  <link rel="stylesheet" href="./styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#DA291C">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Categorización de Cosechadores – Agrícola Huarmey</title>
+<style>
+:root{--rojo:#DA291C;--verde:#78BE20;--gris:#8A8178;--rojo-c:#fdeceb;--verde-c:#f0f8e6;--bg:#faf8f5;--txt:#2b2825;--card:#fff;--line:#e6e1da}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:env(safe-area-inset-bottom,0)}
+header.memb{background:#fff;border-bottom:4px solid var(--rojo);padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;display:flex;justify-content:center;position:relative}
+header.memb img{height:84px;max-width:100%;object-fit:contain}
+.top{display:flex;gap:6px;position:absolute;right:8px;top:calc(8px + env(safe-area-inset-top,0px))}
+.status{font-size:12px;font-weight:700;padding:6px 10px;border-radius:99px;background:var(--verde-c);color:#3d6a0c;border:1px solid var(--verde)}
+.status.off{background:var(--rojo-c);color:var(--rojo);border-color:var(--rojo)}
+h1{text-align:center;font-weight:800;font-size:clamp(20px,5vw,30px);margin:14px 10px 2px;color:var(--rojo)}
+.sub{text-align:center;color:var(--gris);margin:0 10px 14px;font-size:15px}
+main{max-width:1200px;margin:auto;padding:0 12px 40px}
+.btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 18px;min-height:48px;cursor:pointer;background:var(--verde);color:#fff}
+.btn.rojo{background:var(--rojo)}.btn.gris{background:#fff;color:var(--gris);border:2px solid var(--gris)}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.bar .btn{flex:1 1 140px}
+.totales{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:14px}
+.tot{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;border-top:5px solid var(--verde)}
+.tot:nth-child(2){border-top-color:var(--gris)}.tot:nth-child(3){border-top-color:var(--rojo)}
+.tot h3{margin:0 0 8px;font-size:14px;letter-spacing:.5px;color:var(--gris)}
+.tot .row{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:14px;cursor:pointer;border-radius:8px;padding:2px 4px}
+.tot .row:hover,.tot .row.sel{background:var(--verde-c)}
+.tot .row b{min-width:34px;text-align:right}
+.tot .meter{flex:1;height:10px;background:#eee;border-radius:9px;overflow:hidden}.tot .meter i{display:block;height:100%;background:var(--verde)}
+.tot:nth-child(3) .meter i{background:var(--rojo)}.tot:nth-child(2) .meter i{background:var(--gris)}
+.filtros{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px}
+label{font-size:12px;font-weight:700;color:var(--gris);display:block;margin-bottom:3px}
+input,select{width:100%;font:inherit;padding:12px;border:2px solid var(--line);border-radius:10px;background:#fff;min-height:48px}
+input:focus,select:focus{outline:0;border-color:var(--verde)}input.bad{border-color:var(--rojo);background:var(--rojo-c)}
+.count{color:var(--gris);font-size:13px;margin:6px 2px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;margin-bottom:22px}
+.card{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--verde);border-radius:14px;padding:12px}
+.card.pend{border-left-color:#e8a317}.card.err{border-left-color:var(--rojo)}
+.card h4{margin:0 0 6px;font-size:16px}
+.card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}
+.card dt{color:var(--gris);font-weight:700}.card dd{margin:0;text-align:right;word-break:break-word}
+.card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.tag{font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px}
+.t-Sincronizado{background:var(--verde-c);color:#3d6a0c}.t-Pendiente{background:#fff3d6;color:#9a6700}.t-Error{background:var(--rojo-c);color:var(--rojo)}
+.card .btn{padding:6px 12px;min-height:36px;font-size:13px}
+.tw{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;max-height:70vh}
+table{border-collapse:collapse;table-layout:fixed;font-size:13px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+th{position:sticky;top:0;background:var(--rojo);color:#fff;cursor:pointer;user-select:none;position:sticky}
+th .rz{position:absolute;right:0;top:0;bottom:0;width:8px;cursor:col-resize;touch-action:none}
+th .rz:hover{background:rgba(255,255,255,.5)}
+tr:nth-child(even) td{background:var(--verde-c)}
+dialog{border:0;border-radius:16px;padding:16px;width:min(560px,94vw);max-height:92vh}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog h2{margin:0 0 10px;color:var(--rojo)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fgrid .full{grid-column:1/-1}
+.err-msg{color:var(--rojo);font-size:12px;min-height:14px;margin-top:2px}
+#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#333;color:#fff;padding:12px 18px;border-radius:12px;z-index:99;display:none;max-width:90vw;font-size:14px}
+#toast.e{background:var(--rojo)}#toast.o{background:#3d6a0c}
+@media(max-width:480px){.fgrid{grid-template-columns:1fr}.top{position:static;margin-left:8px}header.memb{flex-wrap:wrap;gap:6px;justify-content:center}}
+</style>
 </head>
 <body>
-  <!-- Barra superior de estado de conexión y sincronización -->
-  <div class="status-bar" role="region" aria-label="Estado de conexión y sincronización">
-    <div class="status-bar__left">
-      <span id="connectionBadge" class="conn-badge conn-badge--offline" role="status">
-        <span class="conn-dot" aria-hidden="true"></span>
-        <span id="connectionText">Verificando conexión...</span>
-      </span>
-      <span id="lastSyncText" class="last-sync-text">Última sinc.: Nunca</span>
-    </div>
+<header class="memb">
+  <img src="LOGO_HUARMEY.png" alt="Agrícola Huarmey">
+  <div class="top"><span id="net" class="status">● En línea</span></div>
+</header>
+<h1>CATEGORIZACIÓN DE COSECHADORES</h1>
+<p class="sub">Dashboard de la categorización del año 2026 a más</p>
 
-    <div class="status-bar__right">
-      <button id="btnQueueModal" type="button" class="btn btn--ghost btn--sm" aria-label="Ver cola de sincronización">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span>Cola (<strong id="pendingCountBadge">0</strong>)</span>
-      </button>
-
-      <button id="btnManualSync" type="button" class="btn btn--primary btn--sm" aria-label="Sincronizar ahora">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-        </svg>
-        <span>Sincronizar</span>
-      </button>
-
-      <button id="btnInstallPwa" type="button" class="btn btn--accent btn--sm hidden" aria-label="Instalar aplicación">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-        </svg>
-        <span>Instalar App</span>
-      </button>
-
-      <button id="btnConfigModal" type="button" class="btn btn--ghost btn--sm" title="Configurar conexión API" aria-label="Configurar conexión">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-      </button>
-    </div>
+<main>
+  <div class="bar">
+    <button class="btn" id="bSync">🔄 Sincronizar <span id="pend"></span></button>
+    <button class="btn rojo" id="bNew">➕ Nuevo registro</button>
+    <button class="btn gris" id="bCfg">⚙ Configuración</button>
   </div>
 
-  <!-- Membrete corporativo oficial -->
-  <header class="app-header">
-    <div class="app-header__inner">
-      <div class="app-header__logo-wrap">
-        <img
-          src="./LOGO HUARMEY.png"
-          alt="Logotipo Agrícola Huarmey"
-          class="app-header__logo"
-        />
-      </div>
-      <div class="app-header__titles">
-        <h1 class="app-header__title"><strong>CATEGORIZACIÓN DE COSECHADORES</strong></h1>
-        <p class="app-header__subtitle">Dashboard de la categorización del año 2026 a más</p>
-      </div>
-    </div>
-  </header>
+  <section class="totales" id="totales"></section>
 
-  <!-- Notificaciones / Alertas globales -->
-  <div id="alertBanner" class="alert-banner hidden" role="alert"></div>
+  <section class="filtros">
+    <div style="grid-column:1/-1"><label for="q">🔎 BUSCAR POR DNI O NOMBRE</label><input id="q" type="search" placeholder="Ej: 45678912 o PEREZ" autocomplete="off"></div>
+    <div><label>MODALIDAD</label><select id="fMod"></select></div>
+    <div><label>HISTORICO</label><select id="fHis"></select></div>
+    <div><label>CATEG. 2026</label><select id="fCat"></select></div>
+    <div style="align-self:end"><button class="btn gris" id="bClr" style="width:100%">✖ Limpiar</button></div>
+  </section>
+  <div class="count" id="count"></div>
 
-  <main class="container">
-    <!-- SECCIÓN 1: PANEL DE INDICADORES Y VISUALIZACIONES -->
-    <section class="section-block" aria-labelledby="headingDashboard">
-      <div class="section-header">
-        <h2 id="headingDashboard" class="section-title">
-          <svg class="icon icon--green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-          </svg>
-          Panel de Indicadores y Resumen
-        </h2>
-        <span class="unit-note">Unidad de conteo: <strong>Cosechadores únicos (por DNI)</strong></span>
-      </div>
+  <section class="cards" id="cards"></section>
 
-      <!-- KPIs Principales -->
-      <div class="kpi-grid">
-        <article class="kpi-card kpi-card--total">
-          <div class="kpi-card__label">TOTAL COSECHADORES ÚNICOS</div>
-          <div id="kpiTotalUnique" class="kpi-card__value">0</div>
-          <div id="kpiTotalSubtitle" class="kpi-card__meta">De 0 registros totales cargados</div>
-        </article>
+  <h3 style="color:var(--rojo)">📋 Tabla general</h3>
+  <div class="tw"><table id="tbl"></table></div>
+</main>
 
-        <article class="kpi-card kpi-card--green">
-          <div class="kpi-card__label">PROMEDIO CUMP. % (FILTRADO)</div>
-          <div id="kpiAvgCump" class="kpi-card__value">0.0%</div>
-          <div class="kpi-card__meta">Cumplimiento acumulado</div>
-        </article>
+<dialog id="dCfg">
+  <h2>⚙ Configuración</h2>
+  <label>URL de Apps Script (termina en /exec)</label><input id="cUrl" placeholder="https://script.google.com/macros/s/.../exec">
+  <label style="margin-top:8px">Token de acceso</label><input id="cTok" type="password" placeholder="Token secreto" autocomplete="off">
+  <div class="bar" style="margin:14px 0 0"><button class="btn" id="cSave">Guardar</button><button class="btn gris" onclick="this.closest('dialog').close()">Cerrar</button></div>
+</dialog>
 
-        <article class="kpi-card kpi-card--neutral">
-          <div class="kpi-card__label">PROMEDIO TOTAL DIAS</div>
-          <div id="kpiAvgDias" class="kpi-card__value">0.0</div>
-          <div class="kpi-card__meta">Días laborados por cosechador</div>
-        </article>
-      </div>
+<dialog id="dForm">
+  <h2 id="fTitle">Registro</h2>
+  <form id="frm" novalidate><div class="fgrid" id="fields"></div>
+    <div class="bar" style="margin:14px 0 0"><button class="btn" type="submit">💾 Guardar</button><button class="btn gris" type="button" onclick="this.closest('dialog').close()">Cancelar</button></div>
+  </form>
+</dialog>
+<div id="toast"></div>
 
-      <!-- Visualizaciones dinámicas por MODALIDAD, HISTORICO y CATEG. 2026 -->
-      <div class="charts-grid">
-        <article class="chart-card">
-          <h3 class="chart-card__title">MODALIDAD (Cosechadores únicos)</h3>
-          <div id="chartModalidad" class="bar-chart" aria-live="polite"></div>
-        </article>
+<script>
+'use strict';
+/* ========= Módulo: constantes ========= */
+const FIELDS = ['DNI','NOMBRE TRABAJADOR','MODALIDAD','HISTORICO','CUMP. %','TOTAL DIAS','CATEG. 2026','RANGO %','ORDEN_HISTORICO','ASISTENCIA ACTUAL'];
+const NUMERIC = new Set(['CUMP. %','TOTAL DIAS','RANGO %','ORDEN_HISTORICO','ASISTENCIA ACTUAL']);
+const ICON = {'DNI':'🪪','NOMBRE TRABAJADOR':'👤','MODALIDAD':'🧺','HISTORICO':'📜','CUMP. %':'✅','TOTAL DIAS':'📅','CATEG. 2026':'🍎','RANGO %':'📊','ORDEN_HISTORICO':'🔢','ASISTENCIA ACTUAL':'🌱'};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const num = v => { const n = parseFloat(String(v).replace('%','').replace(',','.')); return isNaN(n) ? null : n; };
 
-        <article class="chart-card">
-          <h3 class="chart-card__title">HISTORICO (Cosechadores únicos)</h3>
-          <div id="chartHistorico" class="bar-chart" aria-live="polite"></div>
-        </article>
+/* ========= Módulo: IndexedDB ========= */
+const DB = (() => {
+  let db;
+  const open = () => new Promise((res, rej) => {
+    const r = indexedDB.open('huarmey_categorizacion', 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore('workers', {keyPath:'DNI'}); r.result.createObjectStore('meta', {keyPath:'k'}); };
+    r.onsuccess = () => { db = r.result; res(); }; r.onerror = () => rej(r.error);
+  });
+  const tx = (st, mode, fn) => new Promise((res, rej) => {
+    const t = db.transaction(st, mode), s = t.objectStore(st), q = fn(s);
+    t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error);
+  });
+  return { open,
+    all: () => tx('workers','readonly',s => s.getAll()),
+    put: r => tx('workers','readwrite',s => s.put(r)),
+    putMany: rs => tx('workers','readwrite',s => rs.forEach(r => s.put(r))),
+    getMeta: async k => (await tx('meta','readonly',s => s.get(k)))?.v,
+    setMeta: (k,v) => tx('meta','readwrite',s => s.put({k,v})) };
+})();
 
-        <article class="chart-card">
-          <h3 class="chart-card__title">CATEG. 2026 (Cosechadores únicos)</h3>
-          <div id="chartCateg2026" class="bar-chart" aria-live="polite"></div>
-        </article>
-      </div>
-    </section>
+/* ========= Módulo: sincronización con Google Sheets (Apps Script) ========= */
+const Sync = (() => {
+  let busy = false;
+  const cfg = async () => ({url: await DB.getMeta('url'), tok: await DB.getMeta('tok')});
+  const clean = r => { const o = {}; FIELDS.forEach(f => o[f] = r[f] ?? ''); return o; };
+  async function run(manual) {
+    if (busy) return; const {url, tok} = await cfg();
+    if (!url || !tok) { if (manual) toast('Configura la URL y el token (⚙)', 'e'); return; }
+    if (!navigator.onLine) { if (manual) toast('Sin conexión. Se sincronizará al volver internet.'); return; }
+    busy = true; $('#bSync').disabled = true;
+    try {
+      // 1) Enviar pendientes/error. text/plain evita preflight CORS en Apps Script.
+      const todos = await DB.all(), pend = todos.filter(r => r._sync !== 'Sincronizado');
+      for (let i = 0; i < pend.length; i += 50) {
+        const lote = pend.slice(i, i + 50);
+        const r = await fetchJSON(url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({token: tok, records: lote.map(clean)})});
+        if (!r.ok) throw new Error(r.error || 'Error del servidor');
+        for (const x of r.results) {
+          const rec = lote.find(l => l.DNI === x.dni); if (!rec) continue;
+          rec._sync = x.ok ? 'Sincronizado' : 'Error'; rec._err = x.ok ? '' : x.error; await DB.put(rec);
+        }
+      }
+      // 2) Descargar datos vigentes (no pisa registros locales sin sincronizar)
+      const r = await fetchJSON(`${url}?action=list&token=${encodeURIComponent(tok)}`);
+      if (!r.ok) throw new Error(r.error || 'Error del servidor');
+      const locales = new Map((await DB.all()).map(x => [x.DNI, x]));
+      const nuevos = r.data.filter(d => !(locales.get(d.DNI) && locales.get(d.DNI)._sync !== 'Sincronizado')).map(d => ({...d, _sync:'Sincronizado'}));
+      await DB.putMany(nuevos); await DB.setMeta('last', Date.now());
+      if (manual) toast('Sincronización completada', 'o');
+    } catch (e) { toast('No se pudo sincronizar: ' + e.message, 'e'); }
+    finally { busy = false; $('#bSync').disabled = false; await App.load(); }
+  }
+  async function fetchJSON(url, opt) {
+    const c = new AbortController(), t = setTimeout(() => c.abort(), 30000);
+    try { const res = await fetch(url, {...opt, signal: c.signal, redirect:'follow'}); if (!res.ok) throw new Error('HTTP ' + res.status); return await res.json(); }
+    finally { clearTimeout(t); }
+  }
+  return { run };
+})();
 
-    <!-- SECCIÓN 2: BÚSQUEDA Y FILTROS COMBINABLES -->
-    <section class="section-block filters-panel" aria-labelledby="headingFilters">
-      <div class="section-header">
-        <h2 id="headingFilters" class="section-title">
-          <svg class="icon icon--red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
-          </svg>
-          Búsqueda y Filtros Combinables
-        </h2>
+/* ========= Módulo: UI ========= */
+let DATA = [], sortF = null, sortAsc = true;
+const widths = JSON.parse(localStorage.getItem('colw') || '{}');
+function toast(m, t='') { const e = $('#toast'); e.textContent = m; e.className = t; e.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => e.style.display = 'none', 3500); }
 
-        <button id="btnClearFilters" type="button" class="btn btn--outline-red btn--sm">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-          <span>Limpiar todos los filtros</span>
-        </button>
-      </div>
+const App = {
+  async load() { DATA = await DB.all(); this.fillFilters(); this.render(); },
+  fillFilters() {
+    [['#fMod','MODALIDAD'],['#fHis','HISTORICO'],['#fCat','CATEG. 2026']].forEach(([id, f]) => {
+      const s = $(id), cur = s.value, vals = [...new Set(DATA.map(d => d[f]).filter(v => v !== ''))].sort((a,b) => String(a).localeCompare(b, 'es', {numeric:true}));
+      s.innerHTML = `<option value="">Todos</option>` + vals.map(v => `<option>${esc(v)}</option>`).join('');
+      s.value = vals.includes(cur) ? cur : '';
+    });
+  },
+  filtered() {
+    const q = norm($('#q').value.trim()), m = $('#fMod').value, h = $('#fHis').value, c = $('#fCat').value;
+    return DATA.filter(d => (!q || norm(d.DNI).includes(q) || norm(d['NOMBRE TRABAJADOR']).includes(q)) && (!m || d.MODALIDAD === m) && (!h || d.HISTORICO === h) && (!c || d['CATEG. 2026'] === c));
+  },
+  render() {
+    const list = this.filtered(), pend = DATA.filter(d => d._sync !== 'Sincronizado').length;
+    $('#pend').textContent = pend ? `(${pend})` : '';
+    $('#count').textContent = `${list.length} de ${DATA.length} registros`;
+    // Totales (sobre el filtro actual): clic en una fila aplica el filtro
+    $('#totales').innerHTML = [['MODALIDAD','🧺','#fMod'],['HISTORICO','📜','#fHis'],['CATEG. 2026','🍎','#fCat']].map(([f, ic, id]) => {
+      const cnt = {}; list.forEach(d => { const k = d[f] || '(vacío)'; cnt[k] = (cnt[k] || 0) + 1; });
+      const mx = Math.max(1, ...Object.values(cnt)), sel = $(id).value;
+      const rows = Object.entries(cnt).sort((a,b) => b[1] - a[1]).map(([k, n]) => `<div class="row ${k === sel ? 'sel' : ''}" data-id="${id}" data-v="${esc(k)}"><span style="min-width:90px">${esc(k)}</span><span class="meter"><i style="width:${n / mx * 100}%"></i></span><b>${n}</b></div>`).join('');
+      return `<div class="tot"><h3>${ic} ${f}</h3>${rows || '<small>Sin datos</small>'}</div>`;
+    }).join('');
+    // Fichas
+    $('#cards').innerHTML = list.length ? list.map(d => `<article class="card ${d._sync === 'Pendiente' ? 'pend' : d._sync === 'Error' ? 'err' : ''}">
+      <h4>${ICON['NOMBRE TRABAJADOR']} ${esc(d['NOMBRE TRABAJADOR'])}</h4>
+      <dl>${FIELDS.filter(f => f !== 'NOMBRE TRABAJADOR').map(f => `<dt>${ICON[f]} ${f}</dt><dd>${esc(d[f])}</dd>`).join('')}</dl>
+      <div class="foot"><span class="tag t-${d._sync}" title="${esc(d._err || '')}">${d._sync}${d._err ? ': ' + esc(d._err) : ''}</span><button class="btn gris" data-edit="${esc(d.DNI)}">✏ Editar</button></div></article>`).join('')
+      : '<p style="grid-column:1/-1;text-align:center;color:var(--gris)">Sin registros. Configura ⚙ y sincroniza, o crea uno nuevo.</p>';
+    this.table(list);
+  },
+  table(list) {
+    if (sortF) { const nm = NUMERIC.has(sortF); list = [...list].sort((a,b) => { let x = a[sortF], y = b[sortF];
+      if (nm) { x = num(x); y = num(y); if (x === null) return 1; if (y === null) return -1; return sortAsc ? x - y : y - x; }
+      return sortAsc ? String(x).localeCompare(y, 'es', {numeric:true}) : String(y).localeCompare(x, 'es', {numeric:true}); }); }
+    const cg = `<colgroup>${FIELDS.map(f => `<col style="width:${widths[f] || (f === 'NOMBRE TRABAJADOR' ? 240 : 120)}px">`).join('')}</colgroup>`;
+    const th = FIELDS.map(f => `<th data-f="${f}">${f} ${sortF === f ? (sortAsc ? '▲' : '▼') : ''}<span class="rz"></span></th>`).join('');
+    $('#tbl').innerHTML = cg + `<thead><tr>${th}</tr></thead><tbody>${list.map(d => `<tr>${FIELDS.map(f => `<td title="${esc(d[f])}">${esc(d[f])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+    const tw = FIELDS.reduce((s, f) => s + (widths[f] || (f === 'NOMBRE TRABAJADOR' ? 240 : 120)), 0); $('#tbl').style.width = tw + 'px';
+  },
+  openForm(dni) {
+    const d = dni ? DATA.find(x => x.DNI === dni) : {};
+    $('#fTitle').textContent = dni ? 'Editar registro' : 'Nuevo registro';
+    $('#fields').innerHTML = FIELDS.map(f => `<div class="${f === 'NOMBRE TRABAJADOR' ? 'full' : ''}"><label>${ICON[f]} ${f}</label>
+      <input name="${f}" value="${esc(d[f] || '')}" ${f === 'DNI' ? 'inputmode="numeric" maxlength="8" ' + (dni ? 'readonly' : '') : NUMERIC.has(f) ? 'inputmode="decimal"' : ''}><div class="err-msg"></div></div>`).join('');
+    $('#dForm').showModal();
+  },
+  validate(o) {
+    const e = {};
+    if (!/^\d{8}$/.test(o.DNI)) e.DNI = 'El DNI debe tener 8 dígitos';
+    if (o['NOMBRE TRABAJADOR'].trim().length < 3) e['NOMBRE TRABAJADOR'] = 'Ingresa el nombre (mín. 3 letras)';
+    ['MODALIDAD','HISTORICO','CATEG. 2026'].forEach(f => { if (!o[f].trim()) e[f] = 'Campo obligatorio'; });
+    NUMERIC.forEach(f => { if (o[f].trim() !== '' && num(o[f]) === null) e[f] = 'Debe ser numérico'; });
+    if (o['TOTAL DIAS'].trim() !== '' && (num(o['TOTAL DIAS']) < 0 || num(o['TOTAL DIAS']) > 366)) e['TOTAL DIAS'] = 'Entre 0 y 366';
+    return e;
+  }
+};
 
-      <div class="filters-grid">
-        <!-- Búsqueda única DNI / NOMBRE TRABAJADOR -->
-        <div class="filter-group filter-group--search">
-          <label for="filterSearch" class="filter-label">Buscar por DNI o NOMBRE TRABAJADOR</label>
-          <div class="search-input-wrap">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-            </svg>
-            <input
-              id="filterSearch"
-              type="search"
-              class="form-control form-control--search"
-              placeholder="Ej. 45891234 o Juan Pérez..."
-              autocomplete="off"
-            />
-          </div>
-        </div>
+/* ========= Eventos ========= */
+$('#bNew').onclick = () => App.openForm();
+$('#bSync').onclick = () => Sync.run(true);
+$('#bClr').onclick = () => { $('#q').value = ''; ['#fMod','#fHis','#fCat'].forEach(i => $(i).value = ''); App.render(); };
+['#q','#fMod','#fHis','#fCat'].forEach(i => $(i).addEventListener('input', () => App.render()));
+$('#totales').onclick = e => { const r = e.target.closest('.row'); if (!r) return; const s = $(r.dataset.id); s.value = s.value === r.dataset.v ? '' : r.dataset.v; App.render(); };
+$('#cards').onclick = e => { const b = e.target.closest('[data-edit]'); if (b) App.openForm(b.dataset.edit); };
+$('#bCfg').onclick = async () => { $('#cUrl').value = (await DB.getMeta('url')) || ''; $('#cTok').value = (await DB.getMeta('tok')) || ''; $('#dCfg').showModal(); };
+$('#cSave').onclick = async () => {
+  const u = $('#cUrl').value.trim(), t = $('#cTok').value.trim();
+  if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)) return toast('La URL debe ser de Apps Script y terminar en /exec', 'e');
+  if (t.length < 8) return toast('Token inválido', 'e');
+  await DB.setMeta('url', u); await DB.setMeta('tok', t); $('#dCfg').close(); toast('Configuración guardada', 'o'); Sync.run(true);
+};
+$('#frm').onsubmit = async ev => {
+  ev.preventDefault(); const o = {}; FIELDS.forEach(f => o[f] = $('#frm').elements[f].value.trim());
+  const errs = App.validate(o);
+  document.querySelectorAll('#fields input').forEach(i => { const m = errs[i.name]; i.classList.toggle('bad', !!m); i.nextElementSibling.textContent = m || ''; });
+  if (Object.keys(errs).length) return toast('Revisa los campos marcados', 'e');
+  const exists = DATA.find(d => d.DNI === o.DNI), isNew = !$('#frm').elements.DNI.readOnly;
+  if (isNew && exists) return toast('Ya existe un registro con ese DNI', 'e');
+  await DB.put({...o, _sync: 'Pendiente', _err: ''}); $('#dForm').close();
+  toast(navigator.onLine ? 'Guardado. Sincronizando…' : 'Guardado sin conexión (Pendiente)', 'o'); await App.load(); Sync.run(false);
+};
+// Tabla: ordenar y redimensionar columnas (mouse y táctil)
+$('#tbl').addEventListener('click', e => { if (e.target.classList.contains('rz')) return; const th = e.target.closest('th'); if (!th) return;
+  const f = th.dataset.f; sortAsc = sortF === f ? !sortAsc : true; sortF = f; App.render(); });
+$('#tbl').addEventListener('pointerdown', e => {
+  if (!e.target.classList.contains('rz')) return; e.preventDefault(); const th = e.target.parentElement, f = th.dataset.f, x0 = e.clientX, w0 = th.offsetWidth;
+  const mv = ev => { const w = Math.max(60, w0 + ev.clientX - x0); widths[f] = w; const i = FIELDS.indexOf(f); $('#tbl').querySelectorAll('col')[i].style.width = w + 'px'; $('#tbl').style.width = FIELDS.reduce((s, k) => s + (widths[k] || (k === 'NOMBRE TRABAJADOR' ? 240 : 120)), 0) + 'px'; };
+  const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); localStorage.setItem('colw', JSON.stringify(widths)); };
+  addEventListener('pointermove', mv); addEventListener('pointerup', up);
+});
+// Conexión
+function net() { const on = navigator.onLine; const n = $('#net'); n.textContent = on ? '● En línea' : '● Sin conexión'; n.classList.toggle('off', !on); }
+addEventListener('online', () => { net(); toast('Conexión recuperada'); Sync.run(false); });
+addEventListener('offline', net);
 
-        <div class="filter-group">
-          <label for="filterModalidad" class="filter-label">MODALIDAD</label>
-          <select id="filterModalidad" class="form-control">
-            <option value="">Todas las modalidades</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="filterHistorico" class="filter-label">HISTORICO</label>
-          <select id="filterHistorico" class="form-control">
-            <option value="">Todos los históricos</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="filterCateg2026" class="filter-label">CATEG. 2026</label>
-          <select id="filterCateg2026" class="form-control">
-            <option value="">Todas las categorías 2026</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="filterRangoPct" class="filter-label">RANGO %</label>
-          <select id="filterRangoPct" class="form-control">
-            <option value="">Todos los rangos %</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="filterCumpMin" class="filter-label">CUMP. % (Mín - Máx)</label>
-          <div class="range-pair">
-            <input id="filterCumpMin" type="number" step="0.1" class="form-control" placeholder="Mín %" aria-label="CUMP. % mínimo" />
-            <span>-</span>
-            <input id="filterCumpMax" type="number" step="0.1" class="form-control" placeholder="Máx %" aria-label="CUMP. % máximo" />
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label for="filterDiasMin" class="filter-label">TOTAL DIAS (Mín - Máx)</label>
-          <div class="range-pair">
-            <input id="filterDiasMin" type="number" step="1" class="form-control" placeholder="Mín" aria-label="TOTAL DIAS mínimo" />
-            <span>-</span>
-            <input id="filterDiasMax" type="number" step="1" class="form-control" placeholder="Máx" aria-label="TOTAL DIAS máximo" />
-          </div>
-        </div>
-      </div>
-
-      <div class="results-summary-bar">
-        <span id="resultsCountText" class="results-count" aria-live="polite">
-          Mostrando 0 resultados encontrados
-        </span>
-      </div>
-    </section>
-
-    <!-- SECCIÓN 3: FICHAS INDIVIDUALES DE COSECHADORES -->
-    <section class="section-block" aria-labelledby="headingCards">
-      <div class="section-header">
-        <h2 id="headingCards" class="section-title">
-          <svg class="icon icon--green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
-          Fichas Individuales de Cosechadores
-        </h2>
-        <div class="pagination-controls" id="cardsPaginationTop"></div>
-      </div>
-
-      <div id="cardsLoading" class="state-box hidden">Cargando registros de cosechadores...</div>
-      <div id="cardsEmpty" class="state-box hidden">
-        No se encontraron cosechadores que coincidan con los filtros aplicados.
-      </div>
-      <div id="cardsContainer" class="cards-grid"></div>
-      <div class="pagination-controls pagination-controls--bottom" id="cardsPaginationBottom"></div>
-    </section>
-
-    <!-- SECCIÓN 4: TABLA DETALLADA ORDENABLE Y REDIMENSIONABLE -->
-    <section class="section-block" aria-labelledby="headingTable">
-      <div class="section-header">
-        <h2 id="headingTable" class="section-title">
-          <svg class="icon icon--neutral" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-          </svg>
-          Tabla Detallada de Cosechadores
-        </h2>
-        <span class="table-hint">Haz clic en un encabezado para ordenar · Arrastra el borde derecho de cada columna para ajustar su ancho</span>
-      </div>
-
-      <div id="tableStateBox" class="state-box hidden"></div>
-
-      <div class="table-wrapper" role="region" aria-label="Tabla detallada de cosechadores" tabindex="0">
-        <table id="cosechadoresTable" class="data-table">
-          <thead>
-            <tr>
-              <th data-col="DNI" data-type="text" style="width: 115px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">DNI <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-              <th data-col="NOMBRE TRABAJADOR" data-type="text" style="width: 240px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">NOMBRE TRABAJADOR <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-              <th data-col="MODALIDAD" data-type="text" style="width: 140px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">MODALIDAD <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-              <th data-col="HISTORICO" data-type="text" style="width: 140px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">HISTORICO <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-              <th data-col="CUMP. %" data-type="number" style="width: 115px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">CUMP. % <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-              <th data-col="TOTAL DIAS" data-type="number" style="width: 120px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">TOTAL DIAS <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-              <th data-col="CATEG. 2026" data-type="text" style="width: 140px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">CATEG. 2026 <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-              <th data-col="RANGO %" data-type="number" style="width: 115px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">RANGO % <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-              <th data-col="ORDEN_HISTORICO" data-type="number" style="width: 155px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">ORDEN_HISTORICO <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-              <th data-col="ASISTENCIA ACTUAL" data-type="text" style="width: 185px;">
-                <div class="th-inner">
-                  <button type="button" class="sort-btn">ASISTENCIA ACTUAL <span class="sort-indicator"></span></button>
-                  <span class="col-resizer" aria-hidden="true"></span>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-
-  <!-- MODAL 1: CONFIGURACIÓN DE CONEXIÓN A GOOGLE APPS SCRIPT -->
-  <dialog id="configModal" class="modal">
-    <form method="dialog" id="configForm" class="modal__box">
-      <div class="modal__header">
-        <h3>Configuración de Conexión en Campo</h3>
-        <button type="button" class="modal__close" data-close-modal="configModal" aria-label="Cerrar">&times;</button>
-      </div>
-      <div class="modal__body">
-        <p class="modal__desc">
-          Ingresa la URL del Web App de Google Apps Script y el Token de acceso asignado por administración. Estos datos se guardan localmente en tu dispositivo.
-        </p>
-        <div class="form-field">
-          <label for="inputApiUrl">URL de Google Apps Script (Web App)</label>
-          <input
-            id="inputApiUrl"
-            type="url"
-            class="form-control"
-            placeholder="https://script.google.com/macros/s/.../exec"
-            required
-          />
-        </div>
-        <div class="form-field">
-          <label for="inputAccessToken">Token / PIN de Acceso de Campo</label>
-          <input
-            id="inputAccessToken"
-            type="password"
-            class="form-control"
-            placeholder="Ingresa tu clave de acceso"
-            required
-          />
-        </div>
-      </div>
-      <div class="modal__footer">
-        <button type="button" class="btn btn--ghost" data-close-modal="configModal">Cancelar</button>
-        <button type="submit" class="btn btn--primary">Guardar y Sincronizar</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- MODAL 2: REGISTRO / ACTUALIZACIÓN DE ASISTENCIA ACTUAL EN CAMPO -->
-  <dialog id="editModal" class="modal">
-    <form method="dialog" id="editForm" class="modal__box">
-      <div class="modal__header">
-        <h3>Actualizar ASISTENCIA ACTUAL</h3>
-        <button type="button" class="modal__close" data-close-modal="editModal" aria-label="Cerrar">&times;</button>
-      </div>
-      <div class="modal__body">
-        <div class="worker-summary-box">
-          <div><strong>DNI:</strong> <span id="editDni"></span></div>
-          <div><strong>NOMBRE TRABAJADOR:</strong> <span id="editNombre"></span></div>
-          <div><strong>CATEG. 2026:</strong> <span id="editCateg"></span></div>
-        </div>
-
-        <div class="form-field">
-          <label for="selectAsistencia">Estado de ASISTENCIA ACTUAL</label>
-          <select id="selectAsistencia" class="form-control">
-            <option value="ASISTIO">ASISTIO</option>
-            <option value="FALTA">FALTA</option>
-            <option value="PERMISO">PERMISO</option>
-            <option value="DESCANSO MEDICO">DESCANSO MEDICO</option>
-            <option value="CUSTOM">Otro valor personalizado...</option>
-          </select>
-        </div>
-
-        <div id="customAsistenciaWrap" class="form-field hidden">
-          <label for="inputCustomAsistencia">Especificar ASISTENCIA ACTUAL</label>
-          <input
-            id="inputCustomAsistencia"
-            type="text"
-            maxlength="60"
-            class="form-control"
-            placeholder="Escribe el estado exacto"
-          />
-        </div>
-
-        <p class="offline-note">
-          Si no hay internet, este cambio se guardará en tu dispositivo con estado <strong>PENDIENTE</strong> y se enviará automáticamente al recuperar señal.
-        </p>
-      </div>
-      <div class="modal__footer">
-        <button type="button" class="btn btn--ghost" data-close-modal="editModal">Cancelar</button>
-        <button type="submit" class="btn btn--primary">Guardar Cambio</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- MODAL 3: COLA DE SINCRONIZACIÓN Y RESOLUCIÓN DE CONFLICTOS -->
-  <dialog id="queueModal" class="modal">
-    <div class="modal__box modal__box--lg">
-      <div class="modal__header">
-        <h3>Cola de Sincronización Offline</h3>
-        <button type="button" class="modal__close" data-close-modal="queueModal" aria-label="Cerrar">&times;</button>
-      </div>
-      <div class="modal__body">
-        <div class="queue-actions">
-          <button id="btnRetryAllQueue" type="button" class="btn btn--primary btn--sm">Reintentar Pendientes</button>
-          <button id="btnClearSyncedQueue" type="button" class="btn btn--ghost btn--sm">Limpiar Sincronizados</button>
-        </div>
-        <div id="queueListContainer" class="queue-list"></div>
-      </div>
-      <div class="modal__footer">
-        <button type="button" class="btn btn--ghost" data-close-modal="queueModal">Cerrar</button>
-      </div>
-    </div>
-  </dialog>
-
-  <script type="module" src="./app.js"></script>
+/* ========= Inicio ========= */
+(async () => {
+  net(); await DB.open(); await App.load();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  Sync.run(false);
+  setInterval(() => Sync.run(false), 5 * 60 * 1000); // refresco cada 5 min cuando hay internet
+})();
+</script>
 </body>
 </html>
